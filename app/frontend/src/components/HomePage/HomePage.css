@@ -1,0 +1,71 @@
+/* Container principal da Home */
+.home {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  margin: 10rem auto;
+  padding: 0 1rem;
+  animation: fadeIn 0.6s ease-out;
+  color: #f0f0f0;
+}
+
+/* Título principal */
+.home-intro h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #00BFFF;
+}
+
+/* Parágrafo introdutório */
+.home-intro p {
+  font-size: 1.2rem;
+  color: #B0B0B0;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+/* Botão principal */
+.button {
+  background-color: #00BFFF;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover suave no botão */
+.button:hover {
+  background-color: #009EDB;
+  transform: scale(1.03);
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade básica */
+@media (max-width: 480px) {
+  .home-intro h1 {
+    font-size: 2rem;
+  }
+
+  .home-intro p {
+    font-size: 1rem;
+  }
+
+  .button {
+    width: 100%;
+    padding: 0.75rem;
+  }
+}

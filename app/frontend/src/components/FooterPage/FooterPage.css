@@ -1,0 +1,27 @@
+.footer {
+  background-color: #1E1E1E;
+  padding: 2rem;
+  text-align: center;
+  color: #B0B0B0;
+  font-size: 0.9rem;
+  border-top: 1px solid #333;
+}
+
+.footer-nav {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.footer-nav a {
+  color: #00BFFF;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-nav a:hover {
+  color: #FFFFFF;
+}

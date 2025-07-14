@@ -1,0 +1,92 @@
+.notification-panel {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  padding: 12px;
+  color: #e0e0e0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.notification-header button {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.notification-header button:hover {
+  color: #fff;
+}
+
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-list li {
+  padding: 10px;
+  border-bottom: 1px solid #2c2c2c;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.notification-list li.unread {
+  background-color: #2a2a2a;
+  font-weight: 500;
+}
+
+.notification-list li.read {
+  color: #aaa;
+}
+
+.notification-list li:hover {
+  background-color: #333;
+}
+
+.notification-list button {
+  background-color: transparent;
+  border: 1px solid #555;
+  color: #bbb;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notification-list button:hover {
+  background-color: #444;
+  color: #fff;
+  border-color: #777;
+}
+
+.notification-list .empty {
+  text-align: center;
+  color: #777;
+  padding: 20px;
+  font-style: italic;
+}

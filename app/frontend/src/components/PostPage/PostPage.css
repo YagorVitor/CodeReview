@@ -1,0 +1,95 @@
+.post-page {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 24px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #eee;
+}
+
+.post-card {
+  background: #1e1e1e;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.post-author-photo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #3f8efc;
+}
+
+.post-author-info strong {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.post-username a {
+  font-size: 0.85rem;
+  color: #aaa;
+  text-decoration: none;
+}
+
+.post-username a:hover {
+  text-decoration: underline;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.post-description-block {
+  margin-bottom: 12px;
+  padding: 12px;
+  background-color: #181818;
+  border-left: 4px solid #3f8efc;
+  border-radius: 8px;
+}
+
+.description-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #3f8efc;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.post-description {
+  font-size: 0.95rem;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+.post-content {
+  font-size: 1rem;
+  color: #ddd;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.post-date {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.post-image-wrapper {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}

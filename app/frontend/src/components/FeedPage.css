@@ -1,0 +1,50 @@
+/* Container principal do feed */
+.feed {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: #121212;
+  color: #eee;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Título ou cabeçalho do feed (opcional) */
+.feed-header {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+/* Espaçamento entre cards */
+.feed .post-card + .post-card {
+  margin-top: 1.5rem;
+}
+
+/* Mensagem de carregamento ou vazio */
+.feed-status {
+  text-align: center;
+  font-size: 1rem;
+  color: #888;
+  margin-top: 2rem;
+  font-style: italic;
+}
+
+/* Botão de novo post (se houver) */
+.new-post-btn {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 10px 20px;
+  background-color: #3f8efc;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.new-post-btn:hover {
+  background-color: #2e7ae0;
+}

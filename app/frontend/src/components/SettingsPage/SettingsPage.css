@@ -1,0 +1,62 @@
+.settings-page {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  color: #eee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.settings-page h2 {
+  margin-bottom: 1rem;
+  color: #00BFFF;
+  text-align: center;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.settings-form label {
+  font-weight: 500;
+}
+
+.settings-form input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
+.settings-form button {
+  padding: 0.6rem;
+  background-color: #00BFFF;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.settings-form button:hover {
+  background-color: #0090cc;
+}
+
+.delete-account-btn {
+  background-color: #ff4d6d;
+}
+
+.delete-account-btn:hover {
+  background-color: #cc3a55;
+}
+
+.settings-message {
+  margin-top: 1rem;
+  text-align: center;
+  color: #00ff88;
+}

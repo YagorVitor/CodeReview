@@ -1,0 +1,88 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 15vh;
+  z-index: 1000;
+}
+
+.followers-modal {
+  background: white;
+  border-radius: 12px;
+  width: 400px;
+  max-height: 70vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  padding-bottom: 1rem;
+}
+
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1rem 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #666;
+}
+
+.close-btn:hover {
+  color: #000;
+}
+
+.followers-list {
+  list-style: none;
+  margin: 0;
+  padding: 1rem;
+}
+
+.follower-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.follower-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+}
+
+.follower-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.mention-link {
+  font-weight: 600;
+  color: #0077cc;
+  text-decoration: none;
+}
+
+.mention-link:hover {
+  text-decoration: underline;
+}
+
+.follower-name {
+  font-size: 14px;
+  color: #555;
+}
+
+.empty-message {
+  padding: 1rem;
+  color: #777;
+  text-align: center;
+}
