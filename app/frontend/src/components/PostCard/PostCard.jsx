@@ -1,16 +1,18 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { useFeed } from "../../context/FeedContext"; // ✅ Adicionado
+import { useFeed } from "../../context/FeedContext";
 import CommentSection from "../CommentSection/CommentSection";
 import { motion } from "framer-motion";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import vsDark from "react-syntax-highlighter/dist/esm/styles/prism/vs-dark";
 import "./PostCard.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function PostCard({ post }) {
   const { user } = useContext(AuthContext);
-  const { fetchPosts } = useFeed(); // ✅ Usado para atualizar o feed
+  const { fetchPosts } = useFeed();
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [likeAnimating, setLikeAnimating] = useState(false);
@@ -43,7 +45,7 @@ function PostCard({ post }) {
 
       if (!res.ok) throw new Error("Erro ao excluir post");
       alert("Post excluído com sucesso.");
-      await fetchPosts(); // ✅ Atualiza o feed automaticamente
+      await fetchPosts();
     } catch (err) {
       alert(err.message);
     }
@@ -175,10 +177,47 @@ function PostCard({ post }) {
         )}
       </div>
 
-      <Link to={`/post/${post.id}`} className="post-card-clickable">
-        {post.content && <p className="post-content">{post.content}</p>}
+      <Link
+        to={`/post/${post.id}`}
+        className="post-card-clickable"
+        aria-label={`Abrir post ${post.description || "sem descrição"}`}
+      >
+        {post.content && (
+          <div className="post-code-block">
+            {post.language === "plain" ? (
+              <div
+                style={{
+                  borderRadius: "8px",
+                  padding: "12px",
+                  maxHeight: "300px",
+                  overflowY: "auto",
+                  backgroundColor: "#fff",
+                  color: "#333",
+                  whiteSpace: "normal",
+                  wordWrap: "break-word",
+                  fontFamily: "inherit",
+                  fontSize: "1rem",
+                  lineHeight: "1.4",
+                  border: "1px solid #ccc",
+                  boxSizing: "border-box",
+                }}
+              >
+                {post.content}
+              </div>
+            ) : (
+              <SyntaxHighlighter
+                language={post.language || "javascript"}
+                style={vsDark}
+                wrapLongLines={true}
+                showLineNumbers
+              >
+                {post.content}
+              </SyntaxHighlighter>
+            )}
+          </div>
+        )}
 
-        {post.image_url ? (
+        {post.image_url && (
           <div className="post-card-image-wrapper">
             <img
               src={`${API_URL}/${post.image_url}`}
@@ -186,7 +225,7 @@ function PostCard({ post }) {
               className="post-card-image"
             />
           </div>
-        ) : null}
+        )}
       </Link>
 
       {renderDescription()}

@@ -6,6 +6,8 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import BackButton from "../BackButton/BackButton";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import vsDark from "react-syntax-highlighter/dist/esm/styles/prism/vs-dark";
 import "./PostPage.css";
 
 dayjs.extend(utc);
@@ -72,7 +74,40 @@ function PostPage() {
           </div>
         </div>
 
-        {post.content && <p className="post-content">{post.content}</p>}
+        {post.content && (
+          <div className="post-code-block">
+            {post.language === "plain" ? (
+              <div
+                style={{
+                  borderRadius: "8px",
+                  padding: "12px",
+                  maxHeight: "400px",
+                  overflowY: "auto",
+                  backgroundColor: "#fff",
+                  color: "#333",
+                  whiteSpace: "normal",
+                  wordWrap: "break-word",
+                  fontFamily: "inherit",
+                  fontSize: "1rem",
+                  lineHeight: "1.4",
+                  border: "1px solid #ccc",
+                  boxSizing: "border-box",
+                }}
+              >
+                {post.content}
+              </div>
+            ) : (
+              <SyntaxHighlighter
+                language={post.language || "javascript"}
+                style={vsDark}
+                wrapLongLines={true}
+                showLineNumbers
+              >
+                {post.content}
+              </SyntaxHighlighter>
+            )}
+          </div>
+        )}
 
         {post.image_url && (
           <div className="post-image-wrapper">

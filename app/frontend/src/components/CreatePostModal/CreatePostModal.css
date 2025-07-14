@@ -42,7 +42,8 @@
 
 /* Inputs e textarea */
 .modal-card input[type="text"],
-.modal-card textarea {
+.modal-card textarea,
+.modal-card select {
   background-color: #2b2b2b;
   color: #f0f0f0;
   border: 1px solid #444;
@@ -71,6 +72,19 @@
   border: 1px solid #333;
 }
 
+/* Preview do código (syntax highlight) */
+.code-preview-container {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 12px;
+  font-family: 'Fira Code', monospace;
+  margin-top: 1rem;
+  border: 1px solid #333;
+  box-sizing: border-box;
+}
+
 /* Botão de envio */
 .modal-card button[type="submit"] {
   background-color: #3f8efc;
@@ -88,9 +102,24 @@
   background-color: #2e7ae0;
 }
 
+/* Botão desabilitado */
+.modal-card button[disabled],
+.modal-card button[aria-disabled="true"] {
+  background-color: #555 !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 /* Erro */
 .post-error {
   color: #ff4d4d;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Mensagem de sucesso */
+.post-success {
+  color: #4caf50;
   font-size: 0.9rem;
   text-align: center;
 }
@@ -111,6 +140,16 @@
 
 .modal-close-button:hover {
   color: #fff;
+}
+
+/* Foco acessível */
+.modal-card input:focus,
+.modal-card textarea:focus,
+.modal-card select:focus,
+.modal-close-button:focus,
+.modal-card button:focus {
+  outline: 2px solid #3f8efc;
+  outline-offset: 2px;
 }
 
 /* Animação de entrada */
