@@ -3,3 +3,5 @@ sqlalchemy
 flask_sqlalchemy
 flask_cors
 bcrypt
+flask-Migrate
+PyJWT
