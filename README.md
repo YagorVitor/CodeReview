@@ -1,146 +1,162 @@
-# Documentação da Aplicação CodeReview_aux
+## CodeReview
 
-## Visão Geral
+### Visão Geral
 
-A aplicação é composta por um backend em Flask (Python) e um frontend em React, organizados nas pastas `app/backend` e `app/frontend`, respectivamente. O sistema implementa uma rede social simplificada, com funcionalidades de autenticação, postagens, comentários, curtidas, seguidores e notificações.
+O **CodeReview** é uma rede social web fullstack em desenvolvimento, com backend em **Flask** e frontend em **React**. O sistema implementa funcionalidades completas de cadastro e login de usuários, postagens com imagens e textos, comentários com suporte a respostas aninhadas, sistema de curtidas, seguidores, notificações e busca de usuários. Ainda estamos refinando a experiência e ajustando alguns detalhes, mas a estrutura principal já está funcional.
 
 ---
 
-## Estrutura de Pastas
+### Estrutura de Pastas
 
 ```
 app/
   backend/
-    app.py                # Inicialização do Flask e registro dos blueprints
-    config.py             # Configurações da aplicação (banco, secret, etc)
-    extensions.py         # Extensões do Flask (SQLAlchemy)
-    manage.py             # CLI para comandos administrativos
-    requirements.txt      # Dependências Python
-    DAO/                  # Camada de acesso a dados (Data Access Objects)
-    database/             # Banco SQLite
-    middleware/           # Utilitários de autenticação JWT
-    migrations/           # Migrações do banco de dados (Alembic)
-    models/               # Modelos ORM (User, Post, Comment, etc)
-    router/               # Blueprints das rotas da API REST
-    uploads/              # Imagens de perfil e posts
+    app.py           # Inicialização da aplicação Flask
+    config.py        # Configurações globais (secret key, banco etc.)
+    extensions.py    # Extensões do Flask como SQLAlchemy, Migrate, etc.
+    manage.py        # CLI para tarefas administrativas
+    requirements.txt # Dependências do backend
+    DAO/             # Camada de acesso a dados
+    database/        # Banco SQLite
+    middleware/      # Autenticação via JWT
+    migrations/      # Migrações de banco com Alembic
+    models/          # Modelos ORM (User, Post, Comment...)
+    router/          # Rotas REST (Blueprints)
+    uploads/         # Imagens de perfil e posts
+
   frontend/
-    src/                  # Código-fonte React
-    public/               # Arquivos estáticos
-    package.json          # Dependências e scripts do frontend
-    vite.config.js        # Configuração do Vite
+    src/             # Código-fonte React
+    public/          # Arquivos públicos
+    package.json     # Dependências e scripts do frontend
+    vite.config.js   # Configurações do Vite
 ```
 
 ---
 
-## Backend (Flask)
+### Backend — Flask (Python)
 
-### Principais Tecnologias
+#### Tecnologias
 
-- **Flask**: Framework web principal
-- **Flask-SQLAlchemy**: ORM para banco de dados SQLite
-- **Flask-Migrate**: Migrações de banco de dados
-- **Flask-CORS**: Suporte a CORS
-- **bcrypt**: Hash de senhas
-- **PyJWT**: Autenticação via JWT
+* Flask
+* Flask-SQLAlchemy
+* Flask-Migrate
+* Flask-CORS
+* PyJWT
+* bcrypt
 
-### Modelos
+#### Modelos
 
-- **User**: Usuários da plataforma (nome, username, email, senha, bio, foto, admin)
-- **Post**: Postagens (texto, imagem, autor, respostas, likes, comentários)
-- **Comment**: Comentários em posts (suporte a replies)
-- **Like**: Curtidas em posts
-- **Follow**: Relação de seguidores/seguidos
-- **Notification**: Notificações de ações (like, comentário, etc)
+* **User**: nome, username, email, senha (hash), bio, foto, admin
+* **Post**: conteúdo textual e/ou imagem, autor, comentários, curtidas
+* **Comment**: comentários em posts com suporte a respostas encadeadas
+* **Like**: registros de curtidas por usuário e post
+* **Follow**: relacionamentos entre usuários (seguir/seguido)
+* **Notification**: notificações sobre interações (curtidas, comentários, etc.)
 
-### Rotas Principais
+#### Endpoints REST
 
-- **/api/login**: Autenticação de usuário (JWT)
-- **/api/users**: CRUD de usuários, busca, upload de foto, seguidores/seguidos
-- **/api/posts**: CRUD de posts, upload de imagem, feed paginado, respostas
-- **/api/comments**: Adicionar/remover comentários
-- **/api/likes**: Curtir/descurtir posts, contagem de likes
-- **/api/notifications**: Listar, marcar como lida, deletar notificações
+```http
+POST   /api/login                 # Autenticação (retorna JWT)
+GET    /api/users                 # Lista de usuários
+POST   /api/users                 # Cadastro de usuário
+GET    /api/users/<id>            # Detalhes de usuário
+PUT    /api/users/<id>            # Atualização de dados do usuário
+DELETE /api/users/<id>            # Deletar conta
+PUT    /api/users/<id>/profile    # Atualizar foto e bio
 
-### Autenticação
+GET    /api/posts                 # Feed paginado
+POST   /api/posts                 # Criar post
+GET    /api/posts/<id>            # Detalhes de um post
+PUT    /api/posts/<id>            # Editar post
+DELETE /api/posts/<id>            # Deletar post
 
-- JWT via header `Authorization: Bearer <token>`
-- Middleware para proteger rotas sensíveis
+POST   /api/comments/<post_id>    # Comentar post
+DELETE /api/comments/<id>         # Remover comentário
 
-### Uploads
+POST   /api/posts/<id>/like       # Curtir post
+DELETE /api/posts/<id>/like       # Descurtir post
 
-- Imagens de perfil e posts são salvas em `backend/uploads/`
-- URLs de imagens são retornadas para uso no frontend
+GET    /api/notifications         # Ver notificações
+```
 
----
+> Obs: rotas protegidas exigem header `Authorization: Bearer <token>`.
 
-## Frontend (React + Vite)
+#### Uploads
 
-### Principais Tecnologias
-
-- **React 19**: Biblioteca principal de UI
-- **Vite**: Bundler e servidor de desenvolvimento
-- **React Router**: Rotas SPA
-- **Framer Motion**: Animações
-- **i18next**: Internacionalização
-- **Dayjs**: Datas
-- **Lucide-react**: Ícones
-
-### Estrutura de Componentes
-
-- **App.jsx**: Define rotas públicas e protegidas, providers de contexto
-- **components/**: Componentes de UI (Feed, Perfil, Post, Login, Signup, etc)
-- **context/**: Contextos globais (autenticação, feed, notificações)
-
-### Funcionalidades
-
-- Cadastro, login e logout de usuários
-- Feed de posts (com texto e imagem)
-- Perfil de usuário (com edição de bio e foto)
-- Seguir/deixar de seguir usuários
-- Curtir/descurtir posts
-- Comentar e responder comentários
-- Notificações em tempo real (likes, comentários)
-- Busca de usuários
-- Páginas institucionais (termos, privacidade, contato)
+* Imagens (perfil e post) são salvas localmente em `backend/uploads/`
+* A API retorna URLs públicas e privadas para serem usadas no frontend
 
 ---
 
-## Como Executar
+### Frontend — React + Vite
 
-### Backend
+#### Tecnologias
 
-1. Instale as dependências:
-   ```
-   pip install -r app/backend/requirements.txt
-   ```
-2. Execute as migrações:
-   ```
-   cd app/backend
-   flask db upgrade
-   ```
-3. Inicie o servidor:
-   ```
-   python app.py
-   ```
+* React
+* Vite
+* React Router
+* Framer Motion
+* i18next
+* Dayjs
+* Lucide-react
 
-### Frontend
+#### Organização
 
-1. Instale as dependências:
-   ```
-   cd app/frontend
-   npm install
-   ```
-2. Inicie o servidor de desenvolvimento:
-   ```
-   npm run dev
-   ```
+* **App.jsx**: ponto de entrada com rotas e providers
+* **components/**: componentes reutilizáveis (Feed, Post, Perfil, etc.)
+* **context/**: gerenciamento global (auth, feed, notificações)
+
+#### Funcionalidades
+
+* Autenticação com persistência via JWT
+* Edição de perfil com foto e bio
+* Feed de posts com imagens e texto
+* Ordenação por Relevância, com margem para melhorias.
+* Comentários e respostas em árvore
+* Curtidas em posts
+* Sistema de seguidores
+* Notificações em tempo real
+* Busca por usuários
+* Páginas institucionais
 
 ---
 
-## Observações
+### Executando Localmente
 
-- O backend utiliza SQLite por padrão, mas pode ser adaptado para outros bancos.
-- O frontend espera que a API esteja disponível em `/api`.
-- O sistema é modular e pode ser expandido facilmente com novos recursos.
+#### Backend (Windows)
 
-Se precisar de exemplos de uso da API ou detalhes de endpoints específicos, posso detalhar conforme necessário!
+```bash
+cd app/backend
+python3 -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+flask db upgrade
+python app.py
+```
+
+#### Backend (Linux/MacOS)
+
+```bash
+cd app/backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+flask db upgrade
+python app.py
+```
+
+#### Frontend(Windows/Linux/MacOS)
+
+```bash
+cd app/frontend
+npm install
+npm run dev
+```
+
+---
+
+### Observações Finais
+
+* Banco padrão é SQLite, mas a arquitetura é compatível com PostgreSQL.
+* A API é acessada pelo frontend via `/api`.
+* O projeto foi estruturado para ser facilmente escalável e modular.
