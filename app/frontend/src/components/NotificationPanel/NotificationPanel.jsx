@@ -82,7 +82,7 @@ function NotificationPanel({ onClose }) {
 
       {notifications.length > 0 && (
         <div style={{ textAlign: "center", marginTop: "10px" }}>
-          <button onClick={clearAll}>Limpar todas</button>
+          <button className="clear-all-btn" onClick={clearAll}>Limpar todas</button>
         </div>
       )}
     </div>

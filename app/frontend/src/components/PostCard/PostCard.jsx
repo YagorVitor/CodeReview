@@ -148,7 +148,6 @@ function PostCard({ post }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Helper to format time ago
   function timeAgo(dateString) {
     const now = new Date();
     const date = new Date(dateString);
@@ -276,17 +275,12 @@ function PostCard({ post }) {
           <MessageSquareText width={20} color={commentsOpen ? "#3f8efc" : "white"} />
         </button>
         
-
-
       </div>
       {likesCount > 0 && (
         <button className="likers-btn" onClick={handleToggleLikers}>
           {showLikers ? "Ocultar curtidas" : "Ver quem curtiu"}
         </button>
       )}
-
-
-
 
       {showLikers && (
         <div className="likers-list">

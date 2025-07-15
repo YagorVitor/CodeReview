@@ -104,6 +104,25 @@ function UserSignup() {
           />
         </label>
 
+        <label className="terms-label">
+          <input
+            type="checkbox"
+            name="terms"
+            required
+            className="custom-checkbox"
+          />
+          <span className="terms-text">
+            Aceito os
+            <span
+              className="terms-link"
+              onClick={() => navigate("/terms")}
+            >
+              termos e condições
+            </span>
+          </span>
+        </label>
+
+
         <motion.button
           type="submit"
           className="pulse-button"

@@ -6,7 +6,7 @@
   background-color: #121212;
   border-radius: 10px;
   color: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
   position: relative;
   text-align: left;
 }
@@ -31,16 +31,17 @@
   border: none;
   background-color: #1e1e1e;
   color: #eee;
-  transition: border 0.3s ease;
+  transition: border 0.3s ease, background-color 0.3s ease;
 }
 
 .signup-form input:focus {
-  outline: 2px solid #00bfff;
+  outline: none;
+  border: 2px solid #00bfff;
   background-color: #252525;
 }
 
 .input-error {
-  border: 2px solid #ff5555;
+  border: 2px solid #ff5555 !important;
 }
 
 .pulse-button {
@@ -52,7 +53,6 @@
   font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 0 0 rgba(0, 191, 255, 0.4);
   animation: pulse 2s infinite;
   transition: background-color 0.3s ease;
 }
@@ -82,4 +82,38 @@
   25% { transform: translateX(-8px); }
   50% { transform: translateX(8px); }
   75% { transform: translateX(-4px); }
+}
+
+.terms-label {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #ccc;
+  cursor: pointer;
+  user-select: none;
+}
+
+.terms-label input[type="checkbox"] {
+  margin-top: 0.15rem;
+  accent-color: #00bfff;
+  cursor: pointer;
+}
+
+.terms-text {
+  line-height: 1.4;
+}
+
+.terms-link {
+  color: #00bfff;
+  text-decoration: underline;
+  margin-left: 4px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.terms-link:hover {
+  color: #009edb;
+  text-decoration: none;
 }
