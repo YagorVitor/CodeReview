@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useFeed } from "../../context/FeedContext";
+import { Trash } from "lucide-react";
 import "./CommentSection.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -94,7 +95,7 @@ function CommentSection({ post }) {
             onClick={() => handleDeleteComment(c.id)}
             title="Excluir comentário"
           >
-            ❌
+            <Trash />
           </button>
         )}
       </div>

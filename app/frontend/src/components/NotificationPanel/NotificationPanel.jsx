@@ -2,6 +2,8 @@ import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { NotificationContext } from "../../context/NotificationContext";
 import "./NotificationPanel.css";
+import {Trash } from "lucide-react";
+
 
 function NotificationPanel({ onClose }) {
   const {
@@ -69,7 +71,9 @@ function NotificationPanel({ onClose }) {
                 {!n.read && (
                   <button onClick={() => markAsRead(n.id)}>Ler</button>
                 )}
-                <button onClick={() => deleteNotification(n.id)}>❌</button>
+                <button onClick={() => deleteNotification(n.id)}>
+                  <Trash />
+                  </button>
               </div>
             </li>
           ))
