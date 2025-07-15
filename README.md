@@ -126,7 +126,7 @@ GET    /api/notifications         # Ver notificações
 #### Backend (Windows)
 
 ```bash
-cd app/backend
+cd backend
 python3 -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -137,7 +137,7 @@ python app.py
 #### Backend (Linux/MacOS)
 
 ```bash
-cd app/backend
+cd backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -148,7 +148,7 @@ python app.py
 #### Frontend(Windows/Linux/MacOS)
 
 ```bash
-cd app/frontend
+cd frontend
 npm install
 npm run dev
 ```
