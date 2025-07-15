@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { NotificationContext } from "../../context/NotificationContext";
-import { UserCircle, LogOut, Settings, Plus, Bell } from "lucide-react";
+import { UserCircle, LogOut, Settings, Plus, Bell, Home as HomeIcon, Search, User, Square } from "lucide-react";
 import CreatePostModal from "../CreatePostModal/CreatePostModal";
 import NotificationPanel from "../NotificationPanel/NotificationPanel";
 import "./HeaderPage.css";
@@ -50,17 +50,23 @@ function HeaderPage() {
 
   return (
     <header className="header">
-      <h1 className="header-title">CodeReview+</h1>
+      <Link to={user ? "/feed" : "/"} className="nav-link">
+        <img className="header-title" src="public/img/logotype_blue.png" height="100px" alt="CodeReview+" />
+      </Link>
 
       <nav className="header-nav">
         <ul className="nav-list">
           <li>
-            <Link to={user ? "/feed" : "/"} className="nav-link">Home</Link>
+            <Link to={user ? "/feed" : "/"} className="nav-link" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <HomeIcon size={26} />
+            </Link>
           </li>
 
           {user && (
             <li>
-              <Link to="/search" className="nav-link">Buscar Usuários</Link>
+              <Link to="/search" className="nav-link">
+                <Search size={26} />
+              </Link>
             </li>
           )}
 
@@ -126,7 +132,7 @@ function HeaderPage() {
                       height: 70,
                       borderRadius: "50%",
                       objectFit: "cover",
-                      border: "1px solid #ccc",
+                      border: "2px solid #00BFFF",
                     }}
                   />
                 ) : (

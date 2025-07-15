@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import vsDark from "react-syntax-highlighter/dist/esm/styles/prism/vs-dark";
 import "./PostCard.css";
+import { Heart, MessageSquareText, Trash } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -28,6 +29,7 @@ function PostCard({ post }) {
     name: "Usuário",
     username: "username",
     profile_picture: null,
+    posted_at: post.created_at,
   };
 
   const profileImage = author.profile_picture
@@ -146,6 +148,25 @@ function PostCard({ post }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Helper to format time ago
+  function timeAgo(dateString) {
+    const now = new Date();
+    const date = new Date(dateString);
+    const seconds = Math.floor((now - date) / 1000);
+
+    if (seconds < 60) return "agora mesmo";
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} min atrás`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} h atrás`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days} d atrás`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months} m atrás`;
+    const years = Math.floor(months / 12);
+    return `${years} a atrás`;
+  }
+
   return (
     <div className="post-card">
       <div className="post-header">
@@ -154,6 +175,11 @@ function PostCard({ post }) {
           <strong>{author.name}</strong>
           <span className="post-username">
             <Link to={`/user/${author.username}`}>@{author.username}</Link>
+          </span>
+          <span className="post-date">
+            {post.created_at
+              ? timeAgo(post.created_at)
+              : ""}
           </span>
         </div>
 
@@ -169,7 +195,7 @@ function PostCard({ post }) {
             {menuOpen && (
               <div className="post-menu">
                 <button className="post-menu-item" onClick={handleDeletePost}>
-                  ❌ Excluir post
+                  <Trash width={16} />Excluir post
                 </button>
               </div>
             )}
@@ -238,22 +264,29 @@ function PostCard({ post }) {
           animate={likeAnimating ? { scale: [1, 1.4, 1] } : {}}
           transition={{ duration: 0.4 }}
         >
-          {likedByUser ? "❤️" : "🤍"} {likesCount}
+          <Heart width={20} /> {likesCount}
+          
         </motion.button>
 
         <button
           className="comments-toggle-btn"
           onClick={() => setCommentsOpen(!commentsOpen)}
         >
-          {commentsOpen ? "Ocultar comentários" : "Ver todos os comentários"}
-        </button>
 
-        {likesCount > 0 && (
-          <button className="likers-btn" onClick={handleToggleLikers}>
-            {showLikers ? "Ocultar curtidas" : "Ver quem curtiu"}
-          </button>
-        )}
+          <MessageSquareText width={20} color={commentsOpen ? "#3f8efc" : "white"} />
+        </button>
+        
+
+
       </div>
+      {likesCount > 0 && (
+        <button className="likers-btn" onClick={handleToggleLikers}>
+          {showLikers ? "Ocultar curtidas" : "Ver quem curtiu"}
+        </button>
+      )}
+
+
+
 
       {showLikers && (
         <div className="likers-list">
@@ -271,6 +304,7 @@ function PostCard({ post }) {
           </ul>
         </div>
       )}
+
 
       {commentsOpen && <CommentSection post={post} />}
     </div>

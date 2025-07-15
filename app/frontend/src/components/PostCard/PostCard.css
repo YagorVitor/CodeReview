@@ -155,17 +155,14 @@
 .likers-btn {
   background: none;
   border: none;
-  font-size: 0.85rem;
-  color: #3f8efc;
+  font-size: 0.75rem;
+  color: white;
   cursor: pointer;
   padding: 4px 0;
   transition: color 0.2s ease;
+  align-self: flex-start;
 }
 
-.likers-btn:hover {
-  color: #2e7ae0;
-  text-decoration: underline;
-}
 
 /* Lista de usuários que curtiram */
 .likers-list {
