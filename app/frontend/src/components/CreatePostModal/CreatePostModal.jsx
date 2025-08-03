@@ -116,9 +116,17 @@ function CreatePostModal({ onClose }) {
         </button>
         <h2 id="modal-title">Novo Post</h2>
         <form onSubmit={handleSubmit} className="post-form">
+            <input
+            type="text"
+            placeholder="Descreva seu problema"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            aria-label="Descrição do post"
+            disabled={isSubmitting}
+          />
           <textarea
             ref={firstInputRef}
-            placeholder="Conteúdo, ex: console.log('Olá mundo');"
+            placeholder="Mostre seu código (se necessário)"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
@@ -126,15 +134,6 @@ function CreatePostModal({ onClose }) {
             aria-label="Conteúdo do código"
             disabled={isSubmitting}
           />
-          <input
-            type="text"
-            placeholder="Descrição"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            aria-label="Descrição do post"
-            disabled={isSubmitting}
-          />
-          <label htmlFor="language-select">Linguagem do código:</label>
           <select
             id="language-select"
             value={language}
@@ -149,14 +148,6 @@ function CreatePostModal({ onClose }) {
             ))}
           </select>
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            aria-label="Upload de imagem para o post"
-            disabled={isSubmitting}
-          />
-
           {previewUrl && (
             <img
               src={previewUrl}
@@ -165,24 +156,18 @@ function CreatePostModal({ onClose }) {
             />
           )}
 
+          
           {content.trim() && (
             <div className="code-preview-container" aria-label="Preview do código">
+              &nbsp;Preview<hr />
               {language === "plain" ? (
                 <div
-                  style={{
+                    style={{
                     borderRadius: "8px",
                     padding: "12px",
                     maxHeight: "200px",
                     overflowY: "auto",
-                    backgroundColor: "#fff",
-                    color: "#333",
-                    whiteSpace: "normal",
-                    wordWrap: "break-word",
-                    fontFamily: "inherit",
-                    fontSize: "1rem",
-                    lineHeight: "1.4",
-                    border: "1px solid #ccc",
-                    boxSizing: "border-box",
+                    backgroundColor: "#1e1e1e",
                   }}
                 >
                   {content}
@@ -200,12 +185,25 @@ function CreatePostModal({ onClose }) {
                     overflowY: "auto",
                     backgroundColor: "#1e1e1e",
                   }}
-                >
+                > 
                   {content}
                 </SyntaxHighlighter>
               )}
             </div>
           )}
+
+
+          <label htmlFor="file-input" className="btn-upload-image">Escolher uma imagem</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            aria-label="Upload de imagem para o post"
+            disabled={isSubmitting}
+            className="file-input"
+            id="file-input"
+          />
+          
 
           {error && (
             <p className="post-error" role="alert">
