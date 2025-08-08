@@ -1,5 +1,5 @@
 from extensions import db
-from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, JSON, Float, func
 from sqlalchemy.orm import relationship
 
 class Post(db.Model):
@@ -11,15 +11,31 @@ class Post(db.Model):
     content  = Column(Text, nullable=True)
     description  = Column(Text, nullable=True)
     image_url = Column(Text, nullable=True)
-
     created_at = Column(DateTime, nullable=False, default=func.now())
     updated_at = Column(DateTime, nullable=True, onupdate=func.now())
+    hashtags = Column(db.JSON)
 
+    # Campos para análise de conteúdo
+    content_vector = Column(JSON) # Vetor TF-IDF ou embedding pré-calculado
+    sentiment_score = Column(Float) # Score de sentimento
+    topic_distribution = Column(JSON) # Distribuição de tópicos
+
+    # Campos para métricas de engajamento
+    likes_count = db.Column(db.Integer, default=0, index=True)
+    comments_count = db.Column(db.Integer, default=0)
+    """ 
+    Adição Futura:
+    share_count = db.Column(db.Integer, default=0) 
+    """
+
+    #Relacionamentos
     user = relationship("User", back_populates="posts")
     reply = relationship("Post", remote_side=[id], back_populates="replies")
     replies = relationship("Post", back_populates="reply", cascade="all, delete-orphan")
     likes = relationship("Like", back_populates="post", cascade="all, delete-orphan")
     comments = relationship("Comment", backref="post", cascade="all, delete-orphan")
+
+
 
     def to_dict(self, current_user=None, include_comments=True):
         is_following = False
@@ -39,7 +55,12 @@ class Post(db.Model):
             'image_url': self.image_url,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
-            'likes_count': len(self.likes),
+            'likes_count': self.likes_count,
+            'comments_count': self.comments_count,
+            'hashtags': self.hashtags or [],
+            'content_vector': self.content_vector,
+            'sentiment_score': self.sentiment_score,
+            'topic_distribution': self.topic_distribution or {},
             'liked_by_user': liked_by_user,
             'author': {
                 'id': self.user.id,

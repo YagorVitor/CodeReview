@@ -6,16 +6,17 @@ import "./CreatePostModal.css";
 
 const LANGUAGES = [
   { label: "Texto simples", value: "plain" },
-  { label: "JavaScript", value: "javascript" },
-  { label: "TypeScript", value: "typescript" },
   { label: "Python", value: "python" },
-  { label: "Java", value: "java" },
   { label: "C++", value: "cpp" },
   { label: "C#", value: "csharp" },
-  { label: "Ruby", value: "ruby" },
-  { label: "Go", value: "go" },
-  { label: "CSS", value: "css" },
+  { label: "Java", value: "java" },
+  { label: "JavaScript", value: "javascript" },
+  { label: "TypeScript", value: "typescript" },
   { label: "HTML", value: "html" },
+  { label: "CSS", value: "css" },
+  { label: "Go", value: "go" },
+  { label: "R", value: "r" },
+  { label: "Ruby", value: "ruby" },
 ];
 
 function CreatePostModal({ onClose }) {

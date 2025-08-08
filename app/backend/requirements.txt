@@ -5,3 +5,6 @@ flask_cors
 bcrypt
 flask-Migrate
 PyJWT
+pandas
+numpy
+scikit-learn
