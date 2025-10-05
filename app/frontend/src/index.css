@@ -1,21 +1,85 @@
+/* app-global.css - versão corrigida (base estável + melhorias leves) */
+
+/* Base simples e compatível com seu antigo estilo funcionando */
 html, body, #root {
   height: 100%;
   margin: 0;
   background-color: #121212;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Wrapper principal igual ao que funcionava */
 .app-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
+  align-items: center;
 }
 
+/* Conteúdo: comportamento compatível com seu JSX atual,
+   mantém o feed centralizado e evita que grid global imponha overflow */
 .content {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 24px;
 }
+
+/* Para quem quiser ativar layout em colunas laterais, uso de wrapper opcional.
+   Não altera nada se não houver esses elementos no JSX. */
+.content-grid {
+  width: 100%;
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 640px) 300px;
+  gap: 20px;
+  align-items: start;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+/* Responsividade: em telas pequenas, fallback para coluna única */
+@media (max-width: 1100px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+    padding: 0 12px;
+  }
+}
+
+/* Evitar overflow horizontal causado por imagens/código */
+img, video, canvas, pre, code {
+  max-width: 100%;
+  height: auto;
+  word-break: break-word;
+}
+
+/* Loading screen simples e compatível */
+.loading-screen {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 18px;
+  color: #bfc8d6;
+  width: 100%;
+}
+
+/* Foco acessível leve para toda a aplicação */
+:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(29, 161, 242, 0.10);
+  border-radius: 6px;
+}
+
+/* Pequenas utilidades */
+.center { display:flex; align-items:center; justify-content:center; }
+.hidden { display:none !important; }

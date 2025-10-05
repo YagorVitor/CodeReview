@@ -1,19 +1,108 @@
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background-color: transparent;
-  border: none;
-  color: #00BFFF;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: color 0.2s ease, background-color 0.2s ease;
+/* Modern reusable back button (matches header aesthetic) */
+
+:root{
+  --btn-bg-solid: linear-gradient(135deg, rgba(14,165,164,1), rgba(6,142,140,1));
+  --btn-bg-ghost: rgba(255,255,255,0.02);
+  --btn-border: rgba(255,255,255,0.04);
+  --btn-color: #e6eef8;
+  --btn-accent: #0ea5a4;
+  --btn-radius: 10px;
+  --shadow-sm: 0 6px 18px rgba(2,6,12,0.35);
 }
 
-.back-button:hover {
-  color: #fff;
-  background-color: #2a2a2a;
+/* Base */
+.back-button {
+  --padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--padding);
+  border-radius: var(--btn-radius);
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg-ghost);
+  color: var(--btn-color);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 140ms ease, box-shadow 160ms ease, background 120ms ease, color 120ms ease;
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min-content;
+  align-items: center;
+}
+
+/* Variants */
+.back-button--solid {
+  background: var(--btn-bg-solid);
+  box-shadow: var(--shadow-sm);
+  border: none;
+  color: white;
+}
+
+.back-button--ghost:hover {
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(2,6,12,0.14);
+}
+.back-button--solid:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(2,6,12,0.24);
+}
+
+/* Sizes */
+.back-button--sm { --padding: 6px 8px; font-size:13px; border-radius:8px; }
+.back-button--md { --padding: 8px 12px; font-size:14px; border-radius:10px; }
+.back-button--lg { --padding: 10px 14px; font-size:15px; border-radius:12px; }
+
+/* Icon and label */
+.back-button__icon { display:inline-grid; place-items:center; color: currentColor; }
+.back-button__label { display:inline-block; white-space:nowrap; }
+
+/* When used as icon-only patterns you can hide the label via a utility */
+.back-button.icon-only .back-button__label { display:none; }
+
+/* Focus ring accessible */
+.back-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(14,165,164,0.09);
+}
+
+/* Subtle ripple effect (CSS) */
+.back-button__ripple {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.06) 0%, transparent 40%);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.back-button:active .back-button__ripple {
+  --x: 50%;
+  --y: 50%;
+  opacity: 1;
+  transition: opacity 360ms ease;
+}
+
+/* Icon color tweak for ghost on dark backgrounds */
+.back-button--ghost .back-button__icon svg { color: var(--btn-color); stroke: currentColor; }
+.back-button--solid .back-button__icon svg { color: white; stroke: white; }
+
+/* Small accessibility helper: show label on hover for icon-only */
+.back-button.icon-only:hover .back-button__label { display:inline-block; position:absolute; left:100%; margin-left:8px; background: rgba(0,0,0,0.6); padding:6px 8px; border-radius:6px; font-weight:600; white-space:nowrap; }
+
+/* Disabled state */
+.back-button:disabled {
+  opacity: 0.46;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .back-button { font-size: 13px; gap:8px; }
+  .back-button--lg { font-size:14px; }
 }

@@ -1,299 +1,289 @@
+/* PostCard.css - card inspirado no visual do Twitter */
+
+/* Card do post */
 .post-card {
-  background: #1a1a1a;
-  width: 850px;
+  background: #ffffff;
   border-radius: 12px;
-  margin-bottom: 1.5rem;
-  border: 1px solid #2a2a2a;
+  padding: 12px;
+  border: 1px solid rgba(15, 20, 25, 0.06);
+  box-shadow: 0 1px 2px rgba(15, 20, 25, 0.03);
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  color: #eee;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #0f172a;
+  transition: box-shadow 160ms ease, transform 120ms ease;
 }
 
+/* Elevação sutil ao passar o mouse */
+.post-card:hover {
+  box-shadow: 0 6px 18px rgba(11, 20, 45, 0.06);
+  transform: translateY(-2px);
+}
+
+/* Header: avatar + autor + menu */
 .post-header {
   display: flex;
-  align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  align-items: flex-start;
+  margin-bottom: 8px;
 }
 
+/* Avatar */
 .post-author-photo {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #3f8efc;
+  border: 1px solid rgba(29,161,242,0.12);
+  flex-shrink: 0;
 }
 
+/* Info do autor */
 .post-author-info {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 2px;
+  min-width: 0;
 }
 
 .post-author-info strong {
-  font-weight: 600;
-  font-size: 1rem;
-  color: #fff;
+  font-size: 15px;
+  color: #0f172a;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .post-username {
-  font-size: 0.85rem;
-  color: #888;
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .post-username a {
-  color: #888;
+  color: #6b7280;
   text-decoration: none;
 }
 
-.post-username a:hover {
-  text-decoration: underline;
+.post-username a:hover { text-decoration: underline; color: #1da1f2; }
+
+/* Data / tempo */
+.post-date {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-left: 6px;
 }
 
+/* Card clicável (conteúdo que leva ao post) */
 .post-card-clickable {
   text-decoration: none;
   color: inherit;
   display: block;
+  margin-bottom: 8px;
 }
 
-.post-content {
-  margin-bottom: 10px;
-  font-size: 0.95rem;
-  color: #ddd;
-  line-height: 1.6;
+/* Bloco de código e conteúdo textual */
+.post-code-block {
+  margin: 8px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(15,20,25,0.06);
 }
 
+.post-code-block pre {
+  margin: 0;
+  padding: 12px;
+  background: #0f172a;
+  color: #e6edf3;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+  font-size: 13px;
+  line-height: 1.45;
+  max-height: 320px;
+  overflow: auto;
+}
+
+/* Imagem do post */
 .post-card-image-wrapper {
   width: 100%;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
   border-radius: 10px;
-  margin-bottom: 10px;
-  background-color: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 8px;
+  background: #f0f4f8;
 }
 
 .post-card-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   display: block;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
+  object-fit: cover;
+  transition: transform 220ms ease;
 }
 
-.post-card-image:hover {
-  transform: scale(1.02);
-}
+.post-card-image:hover { transform: scale(1.02); }
 
+/* Descrição destacada tipo "blockquote" */
 .post-description-block {
   margin-top: 8px;
-  margin-bottom: 12px;
-  padding: 10px 14px;
-  background-color: #181818;
-  border-left: 3px solid #3f8efc;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  background-color: #f2f6f9;
+  border-left: 4px solid #1da1f2;
   border-radius: 8px;
 }
 
 .description-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #3f8efc;
-  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1da1f2;
+  margin-bottom: 6px;
   display: block;
 }
 
 .post-description {
-  font-size: 0.95rem;
-  color: #ccc;
-  line-height: 1.5;
   margin: 0;
+  color: #0f172a;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
+/* Botões de alternar descrição */
 .toggle-description-btn {
   background: none;
   border: none;
-  color: #3f8efc;
+  color: #1da1f2;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 13px;
   margin-top: 6px;
 }
 
-.toggle-description-btn:hover {
-  text-decoration: underline;
-}
-
+/* Ações (curtir, comentar) */
 .post-actions {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
-.like-btn {
+/* Botões principais */
+.post-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: none;
   border: none;
-  font-size: 18px;
+  padding: 6px 8px;
+  border-radius: 9999px;
   cursor: pointer;
-  color: #eee;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: transform 0.2s ease;
+  color: #6b7280;
+  transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+/* Hover / focus states */
+.post-actions button:hover,
+.post-actions button:focus {
+  background: rgba(29,161,242,0.06);
+  color: #1da1f2;
+  transform: translateY(-1px);
+  outline: none;
+  box-shadow: none;
+}
+
+/* Like button state when liked */
+.like-btn {
+  color: #6b7280;
 }
 
 .like-btn.liked {
   color: #e0245e;
+  background: rgba(224,36,94,0.06);
 }
 
-/* Botão para abrir lista de curtidas */
+/* Comments toggle (emphasis quando aberto já definido no componente via props) */
+.comments-toggle-btn {
+  color: #6b7280;
+}
+
+/* Botão para ver curtidas */
 .likers-btn {
   background: none;
   border: none;
-  font-size: 0.75rem;
-  color: white;
+  color: #6b7280;
   cursor: pointer;
+  font-size: 13px;
   padding: 4px 0;
-  transition: color 0.2s ease;
-  align-self: flex-start;
 }
 
-
-/* Lista de usuários que curtiram */
+/* Lista de quem curtiu */
 .likers-list {
-  margin-top: 12px;
-  padding: 12px;
-  background-color: #181818;
+  margin-top: 10px;
+  padding: 10px;
+  background: #ffffff;
   border-radius: 10px;
-  border: 1px solid #2a2a2a;
-  animation: fadeIn 0.3s ease;
+  border: 1px solid rgba(15,20,25,0.04);
+  box-shadow: 0 1px 2px rgba(11,20,45,0.03);
+  animation: fadeIn 200ms ease;
 }
 
-.likers-list h4 {
-  margin-bottom: 8px;
-  color: #3f8efc;
-  font-size: 0.95rem;
-}
+.likers-list h4 { margin: 0 0 8px 0; font-size: 14px; color: #0f172a; }
+.likers-list ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.likers-list li { display: flex; align-items: center; gap: 10px; }
+.likers-list img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 
-.likers-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.likers-list li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.likers-list img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #3f8efc;
-}
-
-.likers-list a {
-  color: #eee;
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-
-.likers-list a:hover {
-  text-decoration: underline;
-}
-
-/* Animação de entrada */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-
-.comments-toggle-btn {
-  background: none;
-  border: none;
-  font-size: 0.85rem;
-  color: #3f8efc;
-  cursor: pointer;
-  padding: 4px 0;
-  transition: color 0.2s ease;
-}
-
-.comments-toggle-btn:hover {
-  color: #2e7ae0;
-  text-decoration: underline;
-}
-
-.post-likers {
-  font-size: 0.8rem;
-  color: #aaa;
-  margin-top: 6px;
-}
-
-.post-likers strong {
-  color: #eee;
-}
-
-.post-menu-wrapper {
-  position: relative;
-}
-
+/* Menu de três pontos */
+.post-menu-wrapper { margin-left: auto; position: relative; }
 .post-menu-btn {
   background: none;
   border: none;
-  color: #888;
-  font-size: 1.4rem;
+  color: #6b7280;
+  font-size: 20px;
+  padding: 6px;
   cursor: pointer;
-  padding: 4px;
-  transition: color 0.2s ease;
 }
+.post-menu-btn:hover { color: #0f172a; }
 
-.post-menu-btn:hover {
-  color: #fff;
-}
-
+/* Menu dropdown */
 .post-menu {
   position: absolute;
-  top: 28px;
+  top: 36px;
   right: 0;
-  background: #1e1e1e;
-  border: 1px solid #333;
+  background: #ffffff;
+  border: 1px solid rgba(15,20,25,0.06);
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  z-index: 10;
-  min-width: 140px;
+  min-width: 160px;
+  box-shadow: 0 6px 20px rgba(11,20,45,0.08);
+  z-index: 40;
 }
 
 .post-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
+  width: 100%;
+  padding: 10px 12px;
+  text-align: left;
   background: none;
   border: none;
-  color: #ff4d6d;
-  text-align: left;
-  font-size: 0.9rem;
+  color: #ef4444;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.post-menu-item:hover { background: rgba(239,68,68,0.04); color: #dc2626; }
+
+/* Pequenas utilidades */
+.post-likers { font-size: 13px; color: #6b7280; margin-top: 6px; }
+.post-likers strong { color: #0f172a; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.post-menu-item:hover {
-  background: #3a0a16;
-  color: #ff6b81;
+/* Responsividade do card */
+@media (max-width: 480px) {
+  .post-card { padding: 10px; border-radius: 10px; }
+  .post-author-photo { width: 40px; height: 40px; }
+  .post-author-info strong { font-size: 14px; }
+  .post-code-block pre { font-size: 12px; padding: 10px; }
 }

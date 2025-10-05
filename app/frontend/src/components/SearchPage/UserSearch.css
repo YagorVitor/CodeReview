@@ -1,0 +1,278 @@
+/* Increased input height and proportional results bar width */
+/* Replace your existing UserSearch.css with this file (scoped to .usersearch) */
+
+.usersearch {
+  --max-w: 980px;        /* slightly wider overall container */
+  --radius: 14px;
+  --bg: #ffffff;
+  --panel: #fbfdff;
+  --muted: #6b7280;
+  --text: #0b1224;
+  --accent: #1d72ff;
+  --glass: rgba(2,6,23,0.04);
+  --shadow-lg: 0 22px 56px rgba(2,6,23,0.10);
+  --shadow-sm: 0 8px 20px rgba(2,6,23,0.05);
+  --focus: rgba(29,114,255,0.12);
+
+  position: relative;
+  width: 100%;
+  max-width: var(--max-w);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color: var(--text);
+  box-sizing: border-box;
+  z-index: 0;
+}
+
+/* bar */
+.usersearch-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* input wrap: taller and more prominent */
+.usersearch-input-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;          /* increased vertical padding */
+  border-radius: calc(var(--radius));
+  background: linear-gradient(180deg, var(--panel), var(--bg));
+  border: 1px solid var(--glass);
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+}
+
+/* larger input for better usability */
+.usersearch-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 12px 44px 12px 8px;  /* more vertical padding, room for clear button */
+  font-size: 16px;              /* slightly larger text */
+  line-height: 1.25;
+  color: var(--text);
+  outline: none;
+  border-radius: 10px;
+  min-width: 0;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  opacity: 1 !important;
+  filter: none !important;
+}
+.usersearch-input::placeholder {
+  color: rgba(107,114,128,0.5);
+}
+.usersearch-input:focus {
+  box-shadow: 0 10px 36px var(--focus);
+  transform: translateY(-1px);
+}
+
+/* small icon at left */
+.usersearch-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  color: var(--muted);
+  flex: 0 0 18px;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* clear button */
+.usersearch-clear {
+  position: absolute;
+  right: 12px;               /* slight shift to align with increased padding */
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+.usersearch-clear:hover { color: var(--accent); }
+
+/* dropdown wrapper positioned under input */
+.usersearch-dropdown {
+  position: absolute;
+  top: calc(100% + 14px);    /* small gap below the taller input */
+  left: 0;
+  right: 0;
+  z-index: 1400;
+  display: flex;
+  justify-content: flex-start;
+  pointer-events: auto;
+}
+
+/* results panel: wider to match increased input */
+.usersearch-list {
+  width: min(100%, 940px);    /* increased width from previous */
+  max-width: calc(100vw - 24px);
+  background: var(--bg);
+  border-radius: 16px;
+  border: 1px solid var(--glass);
+  box-shadow: var(--shadow-lg);
+  padding: 10px;
+  list-style: none;
+  margin: 0;
+  max-height: 70vh;          /* allow more vertical space */
+  overflow: auto;
+  min-width: 0;
+}
+
+/* empty / loading */
+.usersearch-empty {
+  padding: 14px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+/* result row: slightly taller and clearer */
+.usersearch-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 12px;
+  transition: background 120ms ease, transform 120ms ease, box-shadow 140ms ease;
+  cursor: pointer;
+  min-width: 0;
+}
+.usersearch-item + .usersearch-item { margin-top: 10px; }
+
+/* hover / highlight */
+.usersearch-item:hover,
+.usersearch-item.is-highlight {
+  background: rgba(29,114,255,0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+}
+
+/* avatar: slightly larger to match input scale */
+.usersearch-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.05);
+  background: #fff;
+}
+
+/* info block: keep handle visible; allow more room */
+.usersearch-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+}
+.usersearch-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  width: 100%;
+}
+.usersearch-handle {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;    /* more room for username */
+  min-width: 0;
+}
+.usersearch-fullname {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40%;
+  min-width: 0;
+}
+.usersearch-bio {
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.usersearch-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* controls */
+.usersearch-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.us-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 13px;
+}
+.us-btn.primary {
+  background: linear-gradient(135deg, var(--accent), #0ea5a4);
+  color: #fff;
+  border: none;
+}
+.us-btn.outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(29,114,255,0.08);
+}
+
+/* footer */
+.usersearch-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+.us-link {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-weight: 700;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* scrollbar */
+.usersearch-list::-webkit-scrollbar { width: 10px; }
+.usersearch-list::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 8px; }
+
+/* responsive adjustments */
+@media (max-width: 920px) {
+  .usersearch-list { width: calc(100% - 24px); margin: 0 12px; }
+  .usersearch-avatar { width: 52px; height: 52px; }
+  .usersearch-handle { max-width: 48%; }
+  .usersearch-fullname { max-width: 40%; }
+  .usersearch-bio { display: none; }
+}
+
+/* scope safety */
+.usersearch img { display: block; }

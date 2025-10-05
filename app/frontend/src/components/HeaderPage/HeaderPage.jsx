@@ -52,6 +52,7 @@ function HeaderPage() {
     <header className="header">
       <Link to={user ? "/feed" : "/"} className="nav-link">
         <img className="header-title" src="public/img/logotype_blue.png" height="100px" alt="CodeReview+" />
+        <h1>CodeReview+</h1>
       </Link>
 
       <nav className="header-nav">
@@ -124,17 +125,11 @@ function HeaderPage() {
                 aria-label="Menu do usuário"
               >
                 {user.profile_picture ? (
-                  <img
-                    src={`http://localhost:5000/${user.profile_picture}`}
-                    alt="Foto do usuário"
-                    style={{
-                      width: 70,
-                      height: 70,
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                      border: "2px solid #00BFFF",
-                    }}
-                  />
+                    <img
+                        src={`http://localhost:5000/${user.profile_picture}`}
+                        alt="Foto do usuário"
+                        className="header-avatar"
+                    />
                 ) : (
                   <UserCircle size={70} />
                 )}

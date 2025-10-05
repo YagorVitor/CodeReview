@@ -1,95 +1,163 @@
+/* PostPage.css — modernizado para combinar com o tema do app
+   - glass card, teal accents, code block polish, responsive media
+   - mantém compatibilidade com classes existentes
+*/
+
+:root{
+  --panel-bg: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  --panel-border: rgba(255,255,255,0.04);
+  --text: #e6eef8;
+  --muted: #9aa6b2;
+  --accent: #0ea5a4;
+  --accent-warm: #f59e0b;
+  --radius: 14px;
+  --glass-shadow: 0 18px 60px rgba(2,6,12,0.55);
+  --soft-shadow: 0 8px 24px rgba(2,6,12,0.28);
+  --code-bg: #0f172a;
+}
+
+/* Page layout */
 .post-page {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 24px;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #eee;
+  max-width: 880px;
+  margin: 28px auto;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: var(--text);
 }
 
+/* Card */
 .post-card {
-  background: #1e1e1e;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.post-header {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(6px);
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  flex-direction: column;
+  gap: 14px;
 }
 
+/* Back button alignment */
+.post-card > .back-button,
+.post-card > button {
+  align-self: flex-start;
+}
+
+/* Header: author avatar + info */
+.post-header {
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
 .post-author-photo {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #3f8efc;
+  width:56px;
+  height:56px;
+  border-radius:12px;
+  object-fit:cover;
+  border:2px solid rgba(255,255,255,0.06);
+  box-shadow: var(--soft-shadow);
 }
+.post-author-info strong { font-size:1rem; color:var(--text); display:block; }
+.post-username a { color: var(--muted); text-decoration:none; font-size:0.9rem; }
+.post-username a:hover { text-decoration:underline; color:var(--text); }
 
-.post-author-info strong {
-  font-size: 1rem;
-  color: #fff;
+/* Code block */
+.post-code-block {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: var(--code-bg);
+  padding: 8px;
 }
-
-.post-username a {
-  font-size: 0.85rem;
-  color: #aaa;
-  text-decoration: none;
-}
-
-.post-username a:hover {
-  text-decoration: underline;
-}
-
-.post-image {
-  width: 100%;
-  height: auto;
-  max-height: 500px;
-  object-fit: cover;
-  border-radius: 12px;
-  display: block;
-}
-
-.post-description-block {
-  margin-bottom: 12px;
+.post-code-block pre, .post-code-block .react-syntax-highlighter {
+  margin: 0;
   padding: 12px;
-  background-color: #181818;
-  border-left: 4px solid #3f8efc;
+  color: #e6edf3;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+  font-size: 13px;
+  line-height: 1.45;
+  max-height: 480px;
+  overflow: auto;
   border-radius: 8px;
+  box-sizing: border-box;
+  background: transparent !important;
 }
 
-.description-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #3f8efc;
-  margin-bottom: 4px;
-  display: block;
+/* Plain text fallback for long text */
+.post-code-block .plain-text-fallback {
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #ffffff;
+  color: #111827;
+  box-sizing: border-box;
 }
 
-.post-description {
-  font-size: 0.95rem;
-  color: #ccc;
-  line-height: 1.5;
-}
-
-.post-content {
-  font-size: 1rem;
-  color: #ddd;
-  margin-bottom: 12px;
-  line-height: 1.6;
-}
-
-.post-date {
-  font-size: 0.85rem;
-  color: #888;
-  margin-bottom: 16px;
-}
-
+/* Image wrapper */
 .post-image-wrapper {
   width: 100%;
   overflow: hidden;
   border-radius: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 6px;
+  box-shadow: var(--soft-shadow);
+}
+.post-image {
+  width: 100%;
+  height: auto;
+  max-height: 560px;
+  object-fit: cover;
+  display:block;
+  border-radius: 12px;
+}
+
+/* Description block */
+.post-description-block {
+  margin-bottom: 8px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+}
+.description-label {
+  display:block;
+  margin-bottom:6px;
+  font-size:0.9rem;
+  color:var(--accent);
+  font-weight:700;
+}
+.post-description {
+  color: rgba(230,238,248,0.95);
+  font-size: 0.97rem;
+  line-height:1.5;
+  margin:0;
+}
+
+/* Post content and date */
+.post-content { color: rgba(230,238,248,0.95); font-size:1rem; line-height:1.6; }
+.post-date { font-size:0.85rem; color:var(--muted); margin-top:4px; }
+
+/* Comment section spacing */
+.comment-section-wrapper {
+  margin-top: 6px;
+}
+
+/* Utility: fallback for long lines in images or code */
+img, pre, code { max-width:100%; word-break:break-word; }
+
+/* Responsive */
+@media (max-width: 820px) {
+  .post-page { padding: 12px; }
+  .post-card { padding: 14px; }
+  .post-author-photo { width:48px; height:48px; border-radius:10px; }
+  .post-code-block pre { font-size: 12px; max-height: 360px; }
+  .post-image { max-height: 420px; }
+}
+@media (max-width: 520px) {
+  .post-page { margin: 16px auto; }
+  .post-author-photo { width:42px; height:42px; }
+  .post-code-block pre { font-size: 11px; }
+  .post-image { max-height: 320px; }
 }
