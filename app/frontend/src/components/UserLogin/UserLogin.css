@@ -1,0 +1,351 @@
+:root{
+  --panel-width: min(1100px, 92vw);
+  --panel-pad: 40px;
+  --bg-panel: linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.006));
+  --panel-border: rgba(255,255,255,0.03);
+  --text: #e9f3f7;
+  --muted: #97a3ad;
+  --accent-a: #58e0c8;
+  --accent-b: #36bfb4;
+  --danger: #ff6b6b;
+  --radius: 16px;
+  --shadow-lg: 0 48px 140px rgba(2,6,12,0.75);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  box-sizing: border-box;
+}
+
+/* reset box-sizing */
+*,
+*::before,
+*::after { box-sizing: inherit; }
+
+/* ==========================
+   Panel (main) and layout
+   ========================== */
+
+.login-panel {
+  width: var(--panel-width);
+  margin: 48px auto;
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  border: 1px solid var(--panel-border);
+  padding: 0;
+  box-shadow: var(--shadow-lg);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.panel-inner {
+  padding: var(--panel-pad);
+  display: grid;
+  grid-template-columns: 1fr 520px;
+  gap: 32px;
+  align-items: start;
+  box-sizing: border-box;
+}
+
+/* single-column fallback */
+@media (max-width: 1100px) {
+  .panel-inner { grid-template-columns: 1fr; gap: 18px; padding: 28px; }
+}
+
+/* ==========================
+   Left brand/info block
+   ========================== */
+
+.brand-row {
+  display:flex;
+  gap:20px;
+  align-items:flex-start;
+  min-width:0;
+}
+.brand-logo {
+  width:120px;
+  height:120px;
+  object-fit:contain;
+  border-radius:12px;
+  background: linear-gradient(135deg,var(--accent-a),var(--accent-b));
+  padding:18px;
+  box-shadow: 0 26px 80px rgba(54,191,180,0.10);
+  flex-shrink:0;
+}
+.brand-text { min-width:0; }
+.brand-text h1 { margin:0; font-size:2rem; font-weight:900; color:var(--text); line-height:1; }
+.brand-text .sub { margin-top:8px; color:var(--muted); font-weight:800; font-size:15px; max-width:54ch; }
+
+/* ==========================
+   Right column - form card
+   ========================== */
+
+.login-form {
+  background: linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.005));
+  border-radius:12px;
+  padding:28px;
+  border:1px solid rgba(255,255,255,0.02);
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  box-sizing:border-box;
+  min-width:0;
+}
+
+/* ==========================
+   Inputs: normalized, float label,
+   autofill fixes, error states
+   ========================== */
+
+.input-wrap { position:relative; }
+.floating {
+  position:relative;
+  display:block;
+  box-sizing: border-box;
+}
+
+/* Base input style */
+.floating input {
+  width:100%;
+  /* generous left padding so typed text doesn't collide with label */
+  padding:18px 16px 18px 72px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.04);
+  background: linear-gradient(180deg, rgba(255,255,255,0.008), rgba(255,255,255,0.002));
+  color:var(--text);
+  font-size:16px;
+  line-height:1.35;
+  outline:none;
+  transition: border-color .12s ease, box-shadow .12s ease, transform .06s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.01);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+}
+
+/* Hide native placeholder under float label */
+.floating input::placeholder { color: transparent; opacity: 0; }
+
+/* Autofill normalization (Chrome, Safari) */
+.floating input:-webkit-autofill,
+.floating input:-webkit-autofill:hover,
+.floating input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px rgba(255,255,255,0.008) inset !important;
+  box-shadow: 0 0 0px 1000px rgba(255,255,255,0.008) inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Focus */
+.floating input:focus {
+  border-color: var(--accent-a);
+  box-shadow: 0 10px 36px rgba(88,224,200,0.06);
+  transform: translateY(-1px);
+}
+
+/* Error visual */
+.floating input.input-error,
+.floating input[aria-invalid="true"] {
+  border-color: rgba(255,107,107,0.95);
+  box-shadow: 0 10px 36px rgba(255,107,107,0.06);
+}
+
+/* Float label: start higher so it doesn't appear at the bottom */
+.float-label {
+  position:absolute;
+  left:18px;
+  top:18px; /* start higher so label isn't at the bottom */
+  transform: none;
+  pointer-events:none;
+  color:var(--muted);
+  font-weight:800;
+  transition: transform 140ms ease, top 140ms ease, font-size 140ms ease, color 140ms ease;
+  font-size:14px;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+
+/* When input has value or focus, float label up slightly (compact) */
+.floating input:focus + .float-label,
+.floating input:not(:placeholder-shown) + .float-label,
+.floating input:-webkit-autofill + .float-label {
+  top:8px;
+  transform:none;
+  font-size:13px;
+  color: var(--accent-a);
+}
+
+/* Remove native password reveal icons (Chrome/Edge/Safari/IE) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container,
+input[type="password"]::-webkit-search-decoration {
+  display: none !important;
+  width: 0;
+  height: 0;
+  appearance: none;
+}
+
+/* ==========================
+   Show button and suffix placement
+   ========================== */
+
+/* Show button: centered vertically, compact, z-indexed */
+.show-btn {
+  position:absolute;
+  right:12px;
+  top:35%;
+  transform:translateY(-50%);
+  padding:6px 8px;
+  border-radius:8px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.03);
+  color:var(--muted);
+  cursor:pointer;
+  font-weight:800;
+  font-size:12px;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  z-index:3;
+}
+.show-btn:hover { color:var(--text); background: rgba(255,255,255,0.01); }
+
+/* Suffix (@) for email moved to far right corner of the input */
+.input-wrap:first-of-type .field-suffix {
+  position:absolute;
+  right:12px; /* flush to the right */
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-weight:800;
+  font-size:13px;
+  z-index:1;
+}
+
+/* Other suffix use (e.g., if present on password) stays left of show-btn */
+.field-suffix:not(.email-right) {
+  position:absolute;
+  right:76px; /* leaves space for show-btn */
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-weight:800;
+  font-size:13px;
+  z-index:1;
+}
+
+/* Prevent show-btn jumping on focus/autofill */
+.floating input:focus ~ .show-btn,
+.floating input:-webkit-autofill ~ .show-btn,
+.floating input:focus + .float-label ~ .show-btn {
+  transform: translateY(-50%);
+}
+
+/* ==========================
+   Password strength meter
+   ========================== */
+
+.pwd-strength {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:10px;
+  color:var(--muted);
+  font-weight:800;
+  font-size:14px;
+}
+.pwd-strength .bar {
+  width:40px;
+  height:10px;
+  border-radius:10px;
+  background: rgba(255,255,255,0.03);
+  transition: background 160ms ease;
+}
+.pwd-strength .label { margin-left:12px; color:var(--muted); font-size:14px; }
+
+/* Strength colors */
+.pwd-strength.s-1 .bar:nth-child(-n+1) { background:#ff6b6b; }
+.pwd-strength.s-2 .bar:nth-child(-n+2) { background:#ffb86b; }
+.pwd-strength.s-3 .bar:nth-child(-n+3) { background:#58e0c8; }
+.pwd-strength.s-4 .bar { background:#36bfb4; }
+
+/* ==========================
+   Helpers, error, CTA
+   ========================== */
+
+.error-block {
+  padding:14px 16px;
+  border-radius:12px;
+  background: rgba(255,107,107,0.04);
+  border:1px solid rgba(255,107,107,0.08);
+  color:var(--danger);
+  font-weight:900;
+}
+
+.row-between {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:6px;
+}
+.remember {
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  color:var(--muted);
+  font-weight:800;
+  font-size:15px;
+}
+.remember input { width:18px; height:18px; accent-color: var(--accent-a); border-radius:4px; }
+
+.forgot-link { color:var(--muted); text-decoration:none; font-weight:800; }
+.forgot-link:hover { color:var(--text); text-decoration:underline; }
+
+.cta {
+  width:100%;
+  padding:16px 20px;
+  border-radius:14px;
+  border:none;
+  background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+  color:#041018;
+  font-weight:900;
+  font-size:16px;
+  box-shadow: 0 26px 84px rgba(54,191,180,0.14);
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+}
+.cta:disabled { opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
+
+/* footer */
+.form-foot { display:flex; flex-direction:column; gap:8px; align-items:center; margin-top:6px; }
+.signup-line { color:var(--muted); font-weight:800; }
+.signup-line a { color:var(--text); font-weight:900; text-decoration:none; margin-left:6px; }
+.signup-line a:hover { color:var(--accent-a); text-decoration:underline; }
+.legal { color:var(--muted); font-size:13px; }
+
+/* shake animation */
+@keyframes shake { 0%{transform:translateX(0)}16%{transform:translateX(-8px)}32%{transform:translateX(8px)}48%{transform:translateX(-6px)}64%{transform:translateX(6px)}80%{transform:translateX(-3px)}100%{transform:translateX(0)} }
+.shake { animation: shake 420ms ease; }
+
+/* responsive adjustments */
+@media (max-width: 1100px) {
+  .panel-inner { grid-template-columns: 1fr; padding: 28px; gap:18px; }
+  .brand-logo { width:96px; height:96px; padding:14px; }
+  .floating input { padding:14px 14px 14px 44px; }
+  .pwd-strength .bar { width:30px; height:8px; }
+  .field-suffix { right:52px; }
+}
+@media (max-width: 520px) {
+  .login-panel { margin: 18px 12px; }
+  .panel-inner { padding:18px; gap:12px; }
+  .brand-logo { width:80px; height:80px; padding:10px; }
+  .cta { padding:14px; font-size:15px; }
+  .field-suffix { right:48px; }
+  .show-btn { right:10px; padding:6px 7px; font-size:11px; }
+}
