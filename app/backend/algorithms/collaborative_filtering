@@ -1,0 +1,286 @@
+import numpy as np
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+from scipy.sparse import csr_matrix
+from scipy.stats import pearsonr
+from typing import List, Tuple
+import warnings
+
+warnings.filterwarnings('ignore')
+
+class UserBasedCF:
+    """
+    Filtragem Colaborativa baseada em Usuário:
+    sistema de recomendação que encontra usuários
+    com preferências similares e recomenda posts
+    que esses usuários similares curtiram.
+    """
+    def __init__(self, similarity_metric='cosine', min_common_items=2):
+        """
+        Inicializa o recomendador.
+        Args:
+        similarity_metric (str): Métrica de similaridade ('cosine' ou 'pearson')
+        min_common_items (int): Número mínimo de itens em comum para calcular similaridade
+        """
+        self.similarity_metric = similarity_metric
+        self.min_common_items = min_common_items
+        self.user_item_matrix = None
+        self.user_similarity_matrix = None
+
+    def fit(self, interactions_df: pd.DataFrame, missing_strategy='implicit_negative', normalize=False):
+        """
+        Treina o modelo com dados de interação usuário-item.
+        Args:
+            interactions_df (pd.DataFrame): DataFrame com colunas ['user_id', 'post_id', 'rating']
+            missing_strategy (str): 'implicit_negative', 'ignore', 'weighted'
+            normalize (bool): Se True, normaliza a matriz usuário-item
+            cache (bool): Se True, usa cache simples em disco para similaridade
+        """
+        # Tratar dados faltantes
+        interactions_df = self.handle_missing_data(interactions_df, strategy=missing_strategy)
+        # Criar matriz usuário-item
+        self.user_item_matrix = interactions_df.pivot_table(
+            index='user_id',
+            columns='post_id',
+            values='rating',
+            fill_value=0
+        )
+        # Normalização opcional
+        if normalize:
+            self.user_item_matrix = self.user_item_matrix.sub(self.user_item_matrix.mean(axis=1), axis=0)
+        # Calcular matriz de similaridade entre usuários (com cache opcional)
+        self.calculate_user_similarity()
+
+    def calculate_user_similarity(self):
+        """
+        Calcula a matriz de similaridade entre usuários.
+        """
+        if self.similarity_metric == 'cosine':
+            sparse_matrix = csr_matrix(self.user_item_matrix.values)
+            self.user_similarity_matrix = cosine_similarity(sparse_matrix)
+
+        elif self.similarity_metric == 'pearson':
+            corr_matrix = self.user_item_matrix.T.corr(method='pearson')
+            n_common = np.dot((self.user_item_matrix != 0).astype(int), (self.user_item_matrix != 0).astype(int).T)
+            mask = n_common < self.min_common_items
+            corr_matrix.values[mask] = 0
+            self.user_similarity_matrix = corr_matrix.values
+
+        else:
+            raise ValueError("Unsupported similarity metric: {}".format(self.similarity_metric))
+
+    @staticmethod
+    def handle_missing_data(interactions_df, strategy='implicit_negative'):
+        """
+        Tratar dados faltantes usando diferentes estratégias.
+        """
+        if strategy == 'implicit_negative':
+            # Ausência = 0 (default)
+            return interactions_df
+        elif strategy == 'ignore':
+            # Remove interações sem rating positivo
+            return interactions_df[interactions_df['rating'] > 0]
+        elif strategy == 'weighted':
+            # Exemplo: likes=1, comments=0.5, ausência=0
+            if 'type' in interactions_df.columns:
+                interactions_df['rating'] = interactions_df['type'].map({'like': 1, 'comment': 0.5}).fillna(0)
+            return interactions_df
+        else:
+            return interactions_df
+
+    def predict_rating(self, user_id: int, post_id: int, n_neighbors: int = 10) -> float:
+        """
+        Prediz o rating que um usuário daria para um post.
+        Args:
+            user_id (int): ID do usuário
+            post_id (int): ID do post
+            n_neighbors (int): Número de vizinhos a considerar
+        Returns:
+            float: Rating predito (0 a 1)
+        """
+
+        if user_id not in self.user_item_matrix.index or post_id not in self.user_item_matrix.columns:
+            return 0.0
+        
+        # Obter usuários similares
+        similar_users = self.get_similar_users(user_id, n_neighbors)
+        if not similar_users:
+            return 0.0
+        
+        # Calcular rating ponderado baseado na similaridade
+        weighted_sum = 0.0
+        similarity_sum = 0.0
+
+        for similar_user_id, similarity in similar_users:
+            if post_id in self.user_item_matrix.columns:
+                rating = self.user_item_matrix.loc[similar_user_id, post_id]
+                if rating > 0:  # Usuário interagiu com o post
+                    weighted_sum += similarity * rating
+                    similarity_sum += similarity
+
+        if similarity_sum == 0:
+            return 0.0
+        
+        predicted_rating = weighted_sum / similarity_sum
+        return min(1.0, max(0.0, predicted_rating))  # Garantir que esteja entre 0 e 1
+    
+    def get_similar_users(self, user_id: int, n: int = 10) -> List[Tuple[int, float]]:
+        """
+        Obtém os usuários mais similares a um usuário específico.
+        Args:
+            user_id (int): ID do usuário
+            n (int): Número de usuários similares a retornar
+        Returns:
+            List[Tuple[int, float]]: Lista de tuplas (user_id, similaridade)
+        """
+        if user_id not in self.user_item_matrix.index:
+            return []
+        user_index = self.user_item_matrix.index.get_loc(user_id)
+        similarities = self.user_similarity_matrix[user_index]
+        similar_users = np.argsort(similarities)[::-1][:n + 1]
+        similar_users = [(self.user_item_matrix.index[i], similarities[i]) for i in similar_users if i != user_index]
+        return similar_users
+
+class ItemBasedCF:
+    """
+    Implementação de Filtragem Colaborativa Baseada em Item.
+    Esta classe implementa um sistema de recomendação que encontra posts
+    similares com base nas interações dos usuários e recomenda posts
+    semelhantes aos que o usuário-alvo já demonstrou interesse.
+    """
+    def __init__(self, similarity_metric='cosine', min_common_users=2):
+        """
+        Inicializa o recomendador.
+        Args:
+            similarity_metric (str): Métrica de similaridade ('cosine' ou 'pearson')
+            min_common_users (int): Número mínimo de usuários em comum para calcular similaridade
+        """
+        self.similarity_metric = similarity_metric
+        self.min_common_users = min_common_users
+        self.user_item_matrix = None
+        self.item_similarity_matrix = None
+
+    def fit(self, interactions_df: pd.DataFrame, missing_strategy='implicit_negative', normalize=False):
+        """
+        Treina o modelo com dados de interação usuário-item.
+        Args:
+            interactions_df (pd.DataFrame): DataFrame com colunas ['user_id', 'post_id', 'rating']
+            missing_strategy (str): 'implicit_negative', 'ignore', 'weighted'
+            normalize (bool): Se True, normaliza a matriz usuário-item
+            cache (bool): Se True, usa cache simples em disco para similaridade
+        """
+        # Tratar dados faltantes
+        interactions_df = self.handle_missing_data(interactions_df, strategy=missing_strategy)
+        # Criar matriz usuário-item
+        self.user_item_matrix = interactions_df.pivot_table(
+            index='user_id',
+            columns='post_id',
+            values='rating',
+            fill_value=0
+        )
+        # Normalização opcional
+        if normalize:
+            self.user_item_matrix = self.user_item_matrix.sub(self.user_item_matrix.mean(axis=1), axis=0)
+        # Calcular matriz de similaridade entre itens (com cache opcional)
+        self.calculate_item_similarity()
+
+    def calculate_item_similarity(self):
+        """
+        Calcula a matriz de similaridade entre itens.
+        Suporta métricas 'cosine' e 'pearson'.
+        """
+        if self.similarity_metric == 'cosine':
+            sparse_matrix = csr_matrix(self.user_item_matrix.values.T)
+            self.item_similarity_matrix = cosine_similarity(sparse_matrix)
+
+        elif self.similarity_metric == 'pearson':
+            corr_matrix = self.user_item_matrix.corr(method='pearson')
+            n_common = np.dot((self.user_item_matrix != 0).astype(int).T, (self.user_item_matrix != 0).astype(int))
+            mask = n_common < self.min_common_users
+            corr_matrix.values[mask] = 0
+            
+            self.item_similarity_matrix = corr_matrix.values
+
+        else:
+            raise ValueError("Unsupported similarity metric: {}".format(self.similarity_metric))
+
+    @staticmethod
+    def handle_missing_data(interactions_df, strategy='implicit_negative'):
+        """
+        Tratar dados faltantes usando diferentes estratégias.
+        """
+        if strategy == 'implicit_negative':
+            # Ausência = 0 (default)
+            return interactions_df
+        elif strategy == 'ignore':
+            # Remove interações sem rating positivo
+            return interactions_df[interactions_df['rating'] > 0]
+        elif strategy == 'weighted':
+            # Exemplo: likes=1, comments=0.5, ausência=0
+            if 'type' in interactions_df.columns:
+                interactions_df['rating'] = interactions_df['type'].map({'like': 1, 'comment': 0.5}).fillna(0)
+            return interactions_df
+        else:
+            return interactions_df
+
+    def predict_rating(self, user_id: int, item_id: int, n_neighbors: int = 10) -> float:
+        """
+        Prediz o rating que um usuário daria para um item.
+        Args:
+            user_id (int): ID do usuário
+            item_id (int): ID do item (post)
+            n_neighbors (int): Número de itens similares a considerar
+        Returns:
+            float: Rating predito (0 a 1)
+        """
+
+
+        if user_id not in self.user_item_matrix.index or item_id not in self.user_item_matrix.columns:
+            return 0.0
+        # Obter itens que o usuário já avaliou positivamente
+        user_ratings = self.user_item_matrix.loc[user_id]
+        rated_items = user_ratings[user_ratings > 0].index.tolist()
+
+        if not rated_items:
+            return 0.0
+        
+        # Obter itens similares ao item-alvo
+        similar_items = self.get_similar_items(item_id, n_neighbors)
+
+        if not similar_items:
+            return 0.0
+        
+        # Calcular rating ponderado baseado na similaridade com itens que o usuário curtiu
+        weighted_sum = 0.0
+        similarity_sum = 0.0
+
+        for similar_item_id, similarity in similar_items:
+            if similar_item_id in rated_items:
+                rating = user_ratings[similar_item_id]
+                weighted_sum += similarity * rating
+                similarity_sum += similarity
+
+        if similarity_sum == 0:
+            return 0.0
+        
+        predicted_rating = weighted_sum / similarity_sum
+
+        return min(1.0, max(0.0, predicted_rating))  # Garantir que esteja entre 0 e 1
+    
+    def get_similar_items(self, item_id: int, n: int = 10) -> List[Tuple[int, float]]:
+        """
+        Obtém os itens mais similares a um item específico.
+        Args:
+            item_id (int): ID do item
+            n (int): Número de itens similares a retornar
+        Returns:
+            List[Tuple[int, float]]: Lista de tuplas (item_id, similaridade)
+        """
+        if item_id not in self.user_item_matrix.columns:
+            return []
+        item_index = self.user_item_matrix.columns.get_loc(item_id)
+        similarities = self.item_similarity_matrix[item_index]
+        similar_items = np.argsort(similarities)[::-1][:n + 1]
+        similar_items = [(self.user_item_matrix.columns[i], similarities[i]) for i in similar_items if i != item_index]
+        return similar_items
+    
