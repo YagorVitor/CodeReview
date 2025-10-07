@@ -19,9 +19,6 @@
 *::before,
 *::after { box-sizing: inherit; }
 
-/* ==========================
-   Panel (main) and layout
-   ========================== */
 
 .login-panel {
   width: var(--panel-width);
@@ -49,9 +46,6 @@
   .panel-inner { grid-template-columns: 1fr; gap: 18px; padding: 28px; }
 }
 
-/* ==========================
-   Left brand/info block
-   ========================== */
 
 .brand-row {
   display:flex;
@@ -73,9 +67,6 @@
 .brand-text h1 { margin:0; font-size:2rem; font-weight:900; color:var(--text); line-height:1; }
 .brand-text .sub { margin-top:8px; color:var(--muted); font-weight:800; font-size:15px; max-width:54ch; }
 
-/* ==========================
-   Right column - form card
-   ========================== */
 
 .login-form {
   background: linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.005));
@@ -89,10 +80,6 @@
   min-width:0;
 }
 
-/* ==========================
-   Inputs: normalized, float label,
-   autofill fixes, error states
-   ========================== */
 
 .input-wrap { position:relative; }
 .floating {

@@ -1,10 +1,6 @@
-// src/utils/api.js
 export async function apiFetch(path, options = {}, { onUnauthorized } = {}) {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const token = localStorage.getItem("token");
-
-  // debug temporário — remova depois
-  console.log("apiFetch token:", token, "->", path);
 
   const headers = new Headers(options.headers || {});
   headers.set("Accept", "application/json");

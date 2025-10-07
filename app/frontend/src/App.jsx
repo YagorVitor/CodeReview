@@ -27,7 +27,6 @@ import UserProfile from "./components/UserProfile/UserProfile";
 import SearchPage from "./components/SearchPage/SearchPage";
 import PostPage from "./components/PostPage/PostPage";
 import SettingsPage from "./components/SettingsPage/SettingsPage";
-import DMPage from "./components/DMPage/DMPage";
 
 function AppContent() {
   const location = useLocation();
@@ -105,17 +104,6 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
-            <Route
-                path="/dm"
-                element={
-                    <ProtectedRoute>
-                        <AnimatedPage>
-                            <DMPage />
-                        </AnimatedPage>
-                    </ProtectedRoute>
-                }
-            />
-
 
             <Route
               path="/profile"
