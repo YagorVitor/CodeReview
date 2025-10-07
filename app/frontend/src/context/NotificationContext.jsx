@@ -1,55 +1,96 @@
-import React, { createContext, useState, useEffect } from "react";
+// src/context/NotificationContext.jsx
+import React, { createContext, useState, useEffect, useCallback, useContext } from "react";
+import { apiFetch } from "../utils/api";
+import { AuthContext } from "./AuthContext";
 
 export const NotificationContext = createContext();
 
 export function NotificationProvider({ children }) {
+  const { user, loading: authLoading, logout } = useContext(AuthContext);
+
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const fetchNotifications = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  const handleUnauthorized = useCallback(() => {
+    logout?.();
+  }, [logout]);
 
-    try {
-      const res = await fetch("http://localhost:5000/api/notifications", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Erro ao buscar notificações");
-      const data = await res.json();
-      setNotifications(data);
-      setUnreadCount(data.filter((n) => !n.read).length);
-    } catch (err) {
-      console.error(err);
+  const fetchNotifications = useCallback(async () => {
+    if (authLoading) return; // espera AuthProvider inicializar
+    if (!user) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
     }
-  };
 
-  const markAsRead = async (id) => {
-    const token = localStorage.getItem("token");
+    setLoading(true);
     try {
-      await fetch(`http://localhost:5000/api/notifications/${id}/read`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchNotifications();
+      console.log("fetchNotifications token:", localStorage.getItem("token")); // debug temporário
+      const data = await apiFetch("/api/notifications", { method: "GET" }, { onUnauthorized: handleUnauthorized });
+      setNotifications(Array.isArray(data) ? data : []);
+      setUnreadCount((Array.isArray(data) ? data : []).filter((n) => !n.read).length);
     } catch (err) {
-      console.error(err);
+      console.error("Erro ao buscar notificações", err);
+      if (err.status === 401) {
+        // onUnauthorized fará logout
+      }
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [user, authLoading, handleUnauthorized]);
+
+  const markAsRead = useCallback(async (id) => {
+    try {
+      await apiFetch(`/api/notifications/${id}/read`, { method: "PUT" }, { onUnauthorized: handleUnauthorized });
+      setNotifications((prev) => prev.map(n => n.id === id ? { ...n, read: true } : n));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error("Erro ao marcar notificação como lida", err);
+    }
+  }, [handleUnauthorized]);
+
+  const deleteNotification = useCallback(async (id) => {
+    try {
+      await apiFetch(`/api/notifications/${id}`, { method: "DELETE" }, { onUnauthorized: handleUnauthorized });
+      setNotifications((prev) => prev.filter(n => n.id !== id));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error("Erro ao apagar notificação", err);
+    }
+  }, [handleUnauthorized]);
+
+  const clearAll = useCallback(async () => {
+    try {
+      await apiFetch("/api/notifications/clear", { method: "DELETE" }, { onUnauthorized: handleUnauthorized });
+      setNotifications([]);
+      setUnreadCount(0);
+    } catch (err) {
+      console.error("Erro ao limpar notificações", err);
+    }
+  }, [handleUnauthorized]);
 
   useEffect(() => {
-    fetchNotifications(); // inicial
+    // busca inicial quando AuthProvider já carregou
+    if (!authLoading) fetchNotifications();
 
+    // atualizar a cada 30s somente se o usuário estiver logado
     const interval = setInterval(() => {
-      fetchNotifications(); // atualiza contador a cada 30s
+      if (!authLoading && user) fetchNotifications();
     }, 30000);
-
     return () => clearInterval(interval);
-  }, []);
+  }, [authLoading, user, fetchNotifications]);
 
   return (
-    <NotificationContext.Provider
-      value={{ notifications, unreadCount, fetchNotifications, markAsRead }}
-    >
+    <NotificationContext.Provider value={{
+      notifications,
+      unreadCount,
+      fetchNotifications,
+      markAsRead,
+      deleteNotification,
+      clearAll,
+      loading
+    }}>
       {children}
     </NotificationContext.Provider>
   );

@@ -1,51 +1,248 @@
-/* Container principal do feed */
-.feed {
-  max-width: 90%;
-  margin: 0 auto;
-  padding: 1rem;
-  background-color: #121212;
-  color: #eee;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+/* ---------- Smooth view transitions ---------- */
+/* container comum para ambas as views (feed / explore) */
+.section-transition {
+  transition: opacity 360ms cubic-bezier(.2,.9,.3,1),
+              transform 360ms cubic-bezier(.2,.9,.3,1),
+              visibility 360ms;
+  will-change: opacity, transform;
+  display: block;
 }
 
-/* Título ou cabeçalho do feed (opcional) */
+/* visible / active: fully shown */
+.section-transition.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* hidden: slide down + fade; disable interaction */
+.section-transition.hidden {
+  opacity: 0;
+  transform: translateY(8px) scale(0.996);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Improve perceived performance: reduce repaints */
+.feed-list, .explore-grid {
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Slight stagger on explore tiles when switching */
+.explore-grid.active .explore-tile {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.explore-grid.hidden .explore-tile {
+  transform: translateY(6px);
+  opacity: 0.85;
+}
+
+/* If user prefers reduced motion, disable animations */
+@media (prefers-reduced-motion: reduce) {
+  .section-transition {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Optional: soft cross-fade background to avoid white flash */
+.feed-page {
+  background: linear-gradient(180deg, rgba(255,255,255,0.00), rgba(255,255,255,0.00));
+}
+
+/* FeedPage.css - moderno e consistente com PostCard.css */
+.feed-page {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color: #0f172a;
+}
+
+/* Header: título + alternador de modo */
 .feed-header {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-/* Espaçamento entre cards */
-.feed .post-card + .post-card {
-  margin-top: 1.5rem;
+.feed-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
 }
 
-/* Mensagem de carregamento ou vazio */
-.feed-status {
-  text-align: center;
-  font-size: 1rem;
-  color: #888;
-  margin-top: 2rem;
-  font-style: italic;
+/* Botões de alternância (Feed / Explorar) */
+.feed-toggle {
+  display: inline-flex;
+  background: rgba(15, 23, 42, 0.04);
+  border-radius: 999px;
+  padding: 4px;
+  border: 1px solid rgba(15, 20, 25, 0.06);
 }
 
-/* Botão de novo post (se houver) */
-.new-post-btn {
-  display: inline-block;
-  margin-bottom: 1rem;
-  padding: 10px 20px;
-  background-color: #3f8efc;
-  color: white;
+.toggle-btn {
   border: none;
-  border-radius: 24px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  background: transparent;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: 700;
+  transition: background 160ms ease, transform 120ms ease, color 160ms ease;
 }
 
-.new-post-btn:hover {
-  background-color: #2e7ae0;
+.toggle-btn.active {
+  background: linear-gradient(135deg, rgba(29,161,242,0.12), rgba(29,161,242,0.06));
+  color: #1da1f2;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(29,161,242,0.06);
 }
 
+/* Feed em lista */
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Grid de exploração */
+.explore-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  transition: all 200ms ease;
+}
+
+.explore-tile {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(15, 20, 25, 0.06);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.explore-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(11, 20, 45, 0.08);
+}
+
+/* Botão "Carregar mais" */
+.explore-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.load-more-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1da1f2, #0284c7);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease, transform 100ms ease;
+}
+
+.load-more-btn:hover {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  transform: translateY(-2px);
+}
+
+.load-more-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.end-msg {
+  color: #64748b;
+  font-weight: 600;
+  padding: 10px;
+}
+
+/* Estado de erro e loading */
+.error {
+  color: #ef4444;
+  font-weight: 700;
+  text-align: center;
+}
+
+.feed-loading {
+  text-align: center;
+  color: #475569;
+  font-size: 16px;
+}
+
+.feed-title::after {
+  content: none !important;
+}
+
+/* Responsividade */
+@media (max-width: 920px) {
+  .explore-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+  }
+  .feed-title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .explore-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .toggle-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  .feed-title {
+    font-size: 18px;
+  }
+}
+
+/* ---------- Custom Scrollbar ---------- */
+.feed-page::-webkit-scrollbar,
+.explore-grid::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.feed-page::-webkit-scrollbar-track,
+.explore-grid::-webkit-scrollbar-track {
+  background: rgba(15,23,42,0.05);
+  border-radius: 8px;
+}
+
+.feed-page::-webkit-scrollbar-thumb,
+.explore-grid::-webkit-scrollbar-thumb {
+  background: rgba(29,161,242,0.3);
+  border-radius: 8px;
+  transition: background 150ms ease;
+}
+
+.feed-page::-webkit-scrollbar-thumb:hover,
+.explore-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(29,161,242,0.6);
+}
+
+/* Firefox scrollbar */
+.feed-page,
+.explore-grid {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(29,161,242,0.3) rgba(15,23,42,0.05);
+}

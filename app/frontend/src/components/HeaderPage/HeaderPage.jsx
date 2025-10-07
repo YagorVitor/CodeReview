@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { NotificationContext } from "../../context/NotificationContext";
-import { UserCircle, LogOut, Settings, Plus, Bell, Home as HomeIcon, Search, User, Square } from "lucide-react";
+import { UserCircle, LogOut, Settings, Plus, Bell, Home as HomeIcon, Search, User, MessageCircle } from "lucide-react";
 import CreatePostModal from "../CreatePostModal/CreatePostModal";
 import NotificationPanel from "../NotificationPanel/NotificationPanel";
 import "./HeaderPage.css";
@@ -17,6 +17,7 @@ function HeaderPage() {
 
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
+  const notifRef = useRef(null);
 
   const toggleMenu = () => setShowMenu((prev) => !prev);
   const handleLogout = () => {
@@ -31,13 +32,16 @@ function HeaderPage() {
         menuRef.current &&
         !menuRef.current.contains(event.target) &&
         buttonRef.current &&
-        !buttonRef.current.contains(event.target)
+        !buttonRef.current.contains(event.target) &&
+        notifRef.current &&
+        !notifRef.current.contains(event.target)
       ) {
         setShowMenu(false);
+        setShowNotifications(false);
       }
     }
 
-    if (showMenu) {
+    if (showMenu || showNotifications) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -46,7 +50,7 @@ function HeaderPage() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showMenu]);
+  }, [showMenu, showNotifications]);
 
   return (
     <header className="header">
@@ -87,6 +91,7 @@ function HeaderPage() {
           {user && (
             <li>
               <button
+                ref={notifRef}
                 className="nav-link notification-icon"
                 style={{ background: "none", border: "none", cursor: "pointer", position: "relative" }}
                 onClick={() => setShowNotifications((prev) => !prev)}
@@ -100,6 +105,14 @@ function HeaderPage() {
               {showNotifications && (
                 <NotificationPanel onClose={() => setShowNotifications(false)} />
               )}
+            </li>
+          )}
+
+          {user && (
+            <li>
+              <Link to="/dm" className="nav-link" aria-label="Mensagens diretas" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <MessageCircle size={26} />
+              </Link>
             </li>
           )}
 

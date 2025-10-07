@@ -1,15 +1,12 @@
-/* UserProfile.css
-   Versão unificada: moderno (glass card), responsivo, suporte a menções e sugestões.
-   Mantive compatibilidade com as classes existentes do componente.
+/* UserProfile - versão final: Instagram-style posts + responsividade
+   Corrige stacking context / overlay visibility, foco (keyboard) e mobile touch fallback.
 */
 
-/* Theme tokens */
+/* Theme tokens (mantive e adicionei clamp onde útil) */
 :root{
-  --max-width: 980px;
+  --max-width: 1100px;
   --bg-card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   --card-border: rgba(255,255,255,0.04);
-  --light-card-bg: #ffffff;
-  --text-dark: #222;
   --text: #e6eef8;
   --muted: #9aa6b2;
   --accent: #0ea5a4;
@@ -21,31 +18,26 @@
   --shadow-sm: 0 8px 20px rgba(2,6,12,0.2);
   --glass-blur: 6px;
   --gap: 16px;
-  --avatar-size-lg: 140px;
-  --avatar-size-md: 112px;
-  --avatar-size-sm: 88px;
-  --post-tile-size: 120px;
+
+  /* responsive avatar sizes using clamp */
+  --avatar-size-lg: clamp(96px, 14vw, 160px);
+  --avatar-size-md: clamp(72px, 10vw, 120px);
+  --avatar-size-sm: clamp(56px, 12vw, 88px);
+
+  --post-tile-min: 110px;
 }
 
 /* Page container */
 .profile-container {
   max-width: var(--max-width);
-  margin: 22px auto;
+  margin: 20px auto;
   padding: 18px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: var(--gap);
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Segoe UI";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color: var(--text);
-}
-
-/* When using light card variant (legacy) */
-.profile-container.light {
-  background: none;
-  color: var(--text-dark);
 }
 
 /* Header card (glass look) */
@@ -69,10 +61,11 @@
   height: var(--avatar-size-lg);
   display: grid;
   place-items: center;
+  flex-shrink: 0;
 }
 .profile-avatar {
-  width: var(--avatar-size-lg);
-  height: var(--avatar-size-lg);
+  width: 100%;
+  height: 100%;
   border-radius: 18px;
   object-fit: cover;
   border: 2px solid rgba(255,255,255,0.06);
@@ -83,8 +76,8 @@
 /* Floating edit picture button */
 .edit-picture-btn {
   position: absolute;
-  right: -6px;
-  bottom: -6px;
+  right: 6px;
+  bottom: 6px;
   width: 40px;
   height: 40px;
   border-radius: 10px;
@@ -139,15 +132,6 @@
 .follow-btn.not-following { background: linear-gradient(135deg, rgba(14,165,164,0.08), rgba(14,165,164,0.04)); border-color: rgba(14,165,164,0.12); color: var(--accent); }
 .follow-btn.following { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.09); color: var(--accent-warm); }
 
-/* Legacy light theme button look */
-.profile-container.light .edit-btn,
-.profile-container.light .follow-btn {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  box-shadow: 0 4px 10px rgba(0,123,255,0.25);
-}
-
 /* Follow stats */
 .profile-follow-stats {
   display: flex;
@@ -160,13 +144,13 @@
 .profile-followers.clickable {
   cursor: pointer;
   color: var(--text);
-  padding: 4px 8px;
+  padding: 6px 10px;
   border-radius: 8px;
   transition: background 120ms ease;
 }
 .profile-followers.clickable:hover { background: rgba(255,255,255,0.02); }
 
-/* Bio and edit area */
+/* Bio and edit area - position relative to anchor suggestions properly */
 .bio-text,
 .profile-edit {
   background: transparent;
@@ -174,6 +158,7 @@
   font-size: 15px;
   color: rgba(230,238,248,0.95);
   line-height: 1.6;
+  position: relative; /* important for suggestions absolute positioning */
 }
 .profile-edit textarea {
   width: 100%;
@@ -205,10 +190,10 @@
 /* Error message */
 .error-msg { color: var(--danger); margin-top: 8px; font-weight: 700; }
 
-/* Suggestions list (relative to textarea container) */
+/* Suggestions list (absolute relative to .profile-edit) */
 .suggestions-list {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 10px);
   left: 0;
   right: 0;
   max-height: 260px;
@@ -217,7 +202,7 @@
   border: 1px solid rgba(255,255,255,0.03);
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(2,6,12,0.18);
-  z-index: 30;
+  z-index: 60;
   margin: 0;
   padding: 8px;
   list-style: none;
@@ -258,29 +243,114 @@
 }
 .no-posts { color: var(--muted); }
 
-/* Grid of post tiles */
+/* Instagram-style grid: responsive columns, square tiles, hover overlay with counters */
 .profile-posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--post-tile-size), 1fr));
   gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
 }
+
+/* larger screens prefer 3 columns */
+@media (min-width: 1100px) {
+  .profile-posts-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* medium screens 2 columns */
+@media (max-width: 1099px) and (min-width: 680px) {
+  .profile-posts-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* small screens single column grid */
+@media (max-width: 679px) {
+  .profile-posts-grid { grid-template-columns: repeat(1, 1fr); }
+}
+
+/* tile */
 .profile-post-grid-item {
   position: relative;
   display: block;
+  width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 12px;
   background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
   border: 1px solid rgba(255,255,255,0.02);
-  transition: transform 160ms ease, box-shadow 160ms ease;
+  transition: transform 180ms cubic-bezier(.2,.9,.3,1), box-shadow 180ms ease;
   text-decoration: none;
   color: inherit;
   display:flex;
   align-items:center;
   justify-content:center;
+
+  /* force isolation so overlay z-index works reliably */
+  isolation: isolate;
 }
-.profile-post-grid-item:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(2,6,12,0.28); }
-.profile-post-grid-image { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 12px; }
+
+/* raise on hover so overlay isn't clipped by siblings */
+.profile-post-grid-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(2,6,12,0.28);
+  z-index: 2;
+}
+
+/* image itself */
+.profile-post-grid-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  transition: transform 350ms ease;
+  transform-origin: center center;
+  will-change: transform;
+  /* place image under overlay */
+  position: relative;
+  z-index: 1;
+}
+.profile-post-grid-item:hover .profile-post-grid-image { transform: scale(1.06); }
+
+/* --- Fix overlay visibility & stacking --- */
+/* overlay (hidden by default, visible on hover) */
+.profile-post-grid-item .post-overlay {
+  position: absolute;
+  inset: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.46));
+  color: #fff;
+  opacity: 0;
+  transition: opacity 180ms ease, background 180ms ease;
+  pointer-events: none;
+  font-weight:700;
+  font-size: 14px;
+  padding: 12px;
+  z-index: 3; /* ensure overlay sits above the image */
+}
+
+/* show overlay on hover, focus-within or focus (keyboard accessibility) */
+.profile-post-grid-item:hover .post-overlay,
+.profile-post-grid-item:focus-within .post-overlay,
+.profile-post-grid-item:focus .post-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* overlay small pill for counters */
+.post-overlay .pill {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  padding:6px 10px;
+  border-radius:999px;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* placeholder for posts with no image */
 .profile-post-grid-placeholder {
   width: 100%;
   height: 100%;
@@ -291,7 +361,7 @@
   text-align: center;
 }
 
-/* Followers modal (fallback styles if modal doesn't provide) */
+/* Followers modal (fallback) */
 .followers-modal-overlay {
   position: fixed;
   inset: 0;
@@ -322,7 +392,7 @@
 /* Focus outlines for accessibility */
 button:focus, a:focus, textarea:focus { outline: none; box-shadow: 0 0 0 6px rgba(14,165,164,0.08); }
 
-/* Responsive adjustments */
+/* Responsive adjustments for header and avatar */
 @media (max-width: 920px) {
   .profile-header { flex-direction: column; align-items: center; gap: 12px; padding: 14px; }
   .avatar-wrapper { width: var(--avatar-size-md); height: var(--avatar-size-md); min-width: var(--avatar-size-md); }
@@ -330,12 +400,27 @@ button:focus, a:focus, textarea:focus { outline: none; box-shadow: 0 0 0 6px rgb
   .profile-info { align-items: center; text-align: center; }
   .profile-info-top { width:100%; flex-direction: column; gap:8px; }
   .profile-follow-stats { justify-content: center; gap: 12px; }
-  .profile-posts-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
 }
+
+/* small */
 @media (max-width: 520px) {
   .avatar-wrapper { width: var(--avatar-size-sm); height: var(--avatar-size-sm); min-width: var(--avatar-size-sm); }
   .profile-avatar { width: var(--avatar-size-sm); height: var(--avatar-size-sm); }
-  .profile-post-grid-item { height: 96px; border-radius: 8px; }
+  .profile-post-grid-item { border-radius: 10px; }
   .profile-edit textarea { min-height: 90px; }
   .profile-container { padding: 12px; }
+  .follow-btn, .edit-btn { width: 100%; }
+  .profile-info-top { align-items: center; }
+}
+
+/* small polish for hover interactions on touch devices (no hover) */
+/* Mobile fallback: show overlay with more contrast and enable pointer events */
+@media (hover: none) {
+  .profile-post-grid-item .post-overlay {
+    opacity: 1;
+    background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.28));
+    pointer-events: auto;
+  }
+
+  .profile-post-grid-image { transform: none !important; }
 }

@@ -3,6 +3,7 @@ from DAO import post_dao
 from middleware.jwt_util import token_required
 import os
 import uuid
+from datetime import datetime, timezone, timedelta
 from flask import current_app
 
 post_bp = Blueprint('post_bp', __name__)
@@ -140,3 +141,58 @@ def get_posts_by_reply_id(reply_id):
     """Retorna posts que são respostas a outro post."""
     posts = post_dao.get_posts_by_reply_id(reply_id)
     return jsonify([post.to_dict() for post in posts]), 200
+
+@post_bp.route('/posts/explore', methods=['GET'])
+def explore_posts():
+    """
+    Rota pública que retorna posts recomendados para a aba 'Explorar'.
+    Heurística simples (MVP):
+      score = likes_count * 2 + comments_count + recency_score
+    Onde recency_score diminui com o tempo (mais recente => maior score).
+    Aceita query params: page (default 1), per_page (default 30)
+    """
+    try:
+        page = int(request.args.get("page", 1))
+        per_page = int(request.args.get("per_page", 30))
+        # obter um conjunto amplo (ex: page=1 per_page=200) e ordenar por score localmente
+        # Para simplicidade e compatibilidade com seu DAO existente, usamos a função de paginação:
+        posts = post_dao.get_all_posts_paginated(page, per_page)
+        if not posts:
+            return jsonify([]), 200
+
+        # converter para dicts (defensivo)
+        # assumimos que post.to_dict() inclui likes/comments ou dados suficientes
+        posts_data = [p.to_dict() for p in posts]
+
+        # calcular score (defensivo para formatos diferentes)
+        now = datetime.now(timezone.utc)
+        def calc_score(pd):
+            likes = pd.get("likes_count")
+            if likes is None:
+                likes = len(pd.get("likes", [])) if pd.get("likes") else 0
+            comments = pd.get("comments_count")
+            if comments is None:
+                comments = len(pd.get("comments", [])) if pd.get("comments") else 0
+
+            # recency: dias desde publicação
+            created = pd.get("created_at")
+            recency_score = 0
+            if created:
+                try:
+                    # tenta parse isoformat
+                    dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+                    age_hours = max(0, (now - dt).total_seconds() / 3600.0)
+                    # mais recente => maior score; decai com horas
+                    recency_score = max(0, 48 - age_hours) / 48  # 0..1 for last 48h
+                except Exception:
+                    recency_score = 0
+
+            score = (likes * 2) + comments + (recency_score * 3)
+            return score
+
+        posts_data.sort(key=lambda pd: calc_score(pd), reverse=True)
+
+        return jsonify(posts_data), 200
+    except Exception as e:
+        # log do erro provavelmente aqui
+        return jsonify({"error": "Erro interno ao gerar explorar", "detail": str(e)}), 500

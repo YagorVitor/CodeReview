@@ -11,14 +11,14 @@ import { Heart, MessageSquareText, Trash } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-function PostCard({ post }) {
+function PostCard({ post, compact = false }) {
   const { user } = useContext(AuthContext);
   const { fetchPosts } = useFeed();
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [likeAnimating, setLikeAnimating] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [likedByUser, setLikedByUser] = useState(post.liked_by_user);
+  const [likedByUser, setLikedByUser] = useState(Boolean(post.liked_by_user));
   const [likesCount, setLikesCount] = useState(post.likes_count || 0);
   const [likers, setLikers] = useState([]);
   const [showLikers, setShowLikers] = useState(false);
@@ -36,87 +36,77 @@ function PostCard({ post }) {
     ? `${API_URL}/${author.profile_picture}`
     : "/default-profile.png";
 
+  const commentsCount = post.comments_count ?? (post.comments ? post.comments.length : 0);
+
   const handleDeletePost = async () => {
     if (!confirm("Deseja excluir este post?")) return;
-
     try {
       const res = await fetch(`${API_URL}/api/posts/${post.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-
       if (!res.ok) throw new Error("Erro ao excluir post");
-      alert("Post excluído com sucesso.");
       await fetchPosts();
     } catch (err) {
-      alert(err.message);
+      alert(err.message || "Erro ao excluir post");
     }
   };
 
-  const handleLikeToggle = async () => {
+  const handleLikeToggle = async (e) => {
+    e?.stopPropagation?.();
     try {
       const method = likedByUser ? "DELETE" : "POST";
       const res = await fetch(`${API_URL}/api/posts/${post.id}/like`, {
         method,
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-
       if (!res.ok) throw new Error("Erro ao curtir/descurtir");
-
       setLikeAnimating(true);
       setTimeout(() => setLikeAnimating(false), 500);
-
       setLikedByUser(!likedByUser);
-      setLikesCount((prev) => (likedByUser ? prev - 1 : prev + 1));
+      setLikesCount((prev) => (likedByUser ? Math.max(0, prev - 1) : prev + 1));
       setShowLikers(false);
     } catch (err) {
-      alert(err.message);
+      alert(err.message || "Erro ao curtir/descurtir");
     }
   };
 
-  const handleToggleLikers = async () => {
+  const handleToggleLikers = async (e) => {
+    e?.stopPropagation?.();
     if (showLikers) {
       setShowLikers(false);
       return;
     }
-
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Você precisa estar logado para ver quem curtiu.");
       return;
     }
-
     try {
       const res = await fetch(`${API_URL}/api/likes/post/${post.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Erro ao buscar curtidas");
       const data = await res.json();
-      setLikers(data);
+      setLikers(data || []);
       setShowLikers(true);
     } catch (err) {
-      alert(err.message);
+      alert(err.message || "Erro ao buscar curtidas");
     }
   };
 
   const renderDescription = () => {
     const maxLength = 100;
     const desc = post.description?.trim() || "";
-
     if (!desc) return null;
-
-    const label = <span className="description-label">Descrição:</span>;
 
     if (desc.length <= maxLength || showFullDescription) {
       return (
         <div className="post-description-block">
-          {label}
+          <span className="description-label">Descrição:</span>
           <p className="post-description">{desc}</p>
           {desc.length > maxLength && (
-            <button
-              className="toggle-description-btn"
-              onClick={() => setShowFullDescription(false)}
-            >
+            <button className="toggle-description-btn" onClick={() => setShowFullDescription(false)}>
               Ver menos
             </button>
           )}
@@ -126,12 +116,9 @@ function PostCard({ post }) {
 
     return (
       <div className="post-description-block">
-        {label}
+        <span className="description-label">Descrição:</span>
         <p className="post-description">{desc.slice(0, maxLength)}...</p>
-        <button
-          className="toggle-description-btn"
-          onClick={() => setShowFullDescription(true)}
-        >
+        <button className="toggle-description-btn" onClick={() => setShowFullDescription(true)}>
           Ver mais
         </button>
       </div>
@@ -149,10 +136,10 @@ function PostCard({ post }) {
   }, []);
 
   function timeAgo(dateString) {
+    if (!dateString) return "";
     const now = new Date();
     const date = new Date(dateString);
     const seconds = Math.floor((now - date) / 1000);
-
     if (seconds < 60) return "agora mesmo";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes} min atrás`;
@@ -166,6 +153,77 @@ function PostCard({ post }) {
     return `${years} a atrás`;
   }
 
+  // --- Compact mode (explore) ---
+  if (compact) {
+    const likesLabel = likesCount ?? 0;
+    const commentsLabel = commentsCount ?? 0;
+
+    return (
+      <Link
+        to={`/post/${post.id}`}
+        className="post-card compact"
+        aria-label={`Abrir post ${post.description || "sem descrição"}`}
+      >
+        <div className="compact-media">
+          {post.image_url ? (
+            <img
+              src={`${API_URL}/${post.image_url}`}
+              alt={post.description || "Post image"}
+              className="post-card-image compact-image"
+            />
+          ) : post.content ? (
+            <div className="post-code-block compact-code" aria-hidden="true">
+              {post.language === "plain" ? (
+                <pre className="plain-compact">
+                  {post.content.length > 320 ? `${post.content.slice(0, 320)}...` : post.content}
+                </pre>
+              ) : (
+                <SyntaxHighlighter
+                  language={post.language || "javascript"}
+                  style={vsDark}
+                  wrapLongLines={true}
+                  showLineNumbers={false}
+                  customStyle={{
+                    margin: 0,
+                    padding: 8,
+                    background: "transparent",
+                    maxHeight: "220px",
+                    overflow: "hidden",
+                  }}
+                  codeTagProps={{ style: { whiteSpace: "pre-wrap", fontFamily: "inherit", fontSize: 12 } }}
+                >
+                  {post.content.length > 1200 ? post.content.slice(0, 1200) + "..." : post.content}
+                </SyntaxHighlighter>
+              )}
+            </div>
+          ) : (
+            <div className="compact-placeholder">Sem mídia</div>
+          )}
+        </div>
+
+        <div className="compact-footer" role="presentation" aria-hidden="false">
+          <div className="compact-author">
+            <img src={profileImage} alt={author.name} className="compact-author-avatar" />
+            <div className="compact-author-meta">
+              <strong>{author.name}</strong>
+              <span className="compact-time">{timeAgo(post.created_at)}</span>
+            </div>
+          </div>
+
+          <div className="compact-overlay" aria-hidden="true">
+            <span className="pill">
+              <Heart width={14} /> {likesLabel}
+            </span>
+            <span className="pill">
+              <MessageSquareText width={14} /> {commentsLabel}
+            </span>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
+  // --- Full feed card ---
   return (
     <div className="post-card">
       <div className="post-header">
@@ -175,11 +233,7 @@ function PostCard({ post }) {
           <span className="post-username">
             <Link to={`/user/${author.username}`}>@{author.username}</Link>
           </span>
-          <span className="post-date">
-            {post.created_at
-              ? timeAgo(post.created_at)
-              : ""}
-          </span>
+          <span className="post-date">{post.created_at ? timeAgo(post.created_at) : ""}</span>
         </div>
 
         {user?.id === author.id && (
@@ -188,13 +242,15 @@ function PostCard({ post }) {
               className="post-menu-btn"
               onClick={() => setMenuOpen((prev) => !prev)}
               title="Mais opções"
+              aria-expanded={menuOpen}
             >
               ⋯
             </button>
             {menuOpen && (
-              <div className="post-menu">
+              <div className="post-menu" role="menu">
                 <button className="post-menu-item" onClick={handleDeletePost}>
-                  <Trash width={16} />Excluir post
+                  <Trash width={16} />
+                  Excluir post
                 </button>
               </div>
             )}
@@ -244,11 +300,7 @@ function PostCard({ post }) {
 
         {post.image_url && (
           <div className="post-card-image-wrapper">
-            <img
-              src={`${API_URL}/${post.image_url}`}
-              alt="Post"
-              className="post-card-image"
-            />
+            <img src={`${API_URL}/${post.image_url}`} alt="Post" className="post-card-image" />
           </div>
         )}
       </Link>
@@ -263,42 +315,39 @@ function PostCard({ post }) {
           animate={likeAnimating ? { scale: [1, 1.4, 1] } : {}}
           transition={{ duration: 0.4 }}
         >
-          <Heart width={20} /> {likesCount}
-          
+          <Heart width={20} /> <span className="like-count">{likesCount}</span>
         </motion.button>
 
         <button
           className="comments-toggle-btn"
           onClick={() => setCommentsOpen(!commentsOpen)}
+          title="Comentários"
+          aria-pressed={commentsOpen}
         >
-
-          <MessageSquareText width={20} color={commentsOpen ? "#3f8efc" : "white"} />
+          <MessageSquareText width={20} color={commentsOpen ? "#3f8efc" : "currentColor"} />{" "}
+          <span className="comments-count">{commentsCount}</span>
         </button>
-        
       </div>
+
       {likesCount > 0 && (
         <button className="likers-btn" onClick={handleToggleLikers}>
-          {showLikers ? "Ocultar curtidas" : "Ver quem curtiu"}
+          {showLikers ? "Ocultar curtidas" : `Ver quem curtiu (${likesCount})`}
         </button>
       )}
 
       {showLikers && (
-        <div className="likers-list">
+        <div className="likers-list" role="region" aria-label="Quem curtiu">
           <h4>Quem curtiu:</h4>
           <ul>
-            {likers.map((user) => (
-              <li key={user.id}>
-                <img
-                  src={`${API_URL}/${user.profile_picture || "default-profile.png"}`}
-                  alt={user.name}
-                />
-                <Link to={`/user/${user.username}`}>{user.name}</Link>
+            {likers.map((u) => (
+              <li key={u.id}>
+                <img src={`${API_URL}/${u.profile_picture || "default-profile.png"}`} alt={u.name} />
+                <Link to={`/user/${u.username}`}>{u.name}</Link>
               </li>
             ))}
           </ul>
         </div>
       )}
-
 
       {commentsOpen && <CommentSection post={post} />}
     </div>

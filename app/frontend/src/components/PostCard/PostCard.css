@@ -1,33 +1,42 @@
-/* PostCard.css - card inspirado no visual do Twitter */
+/* PostCard.css - modo feed + compact (explore) atualizado */
 
-/* Card do post */
+/* ---------- Theme tokens (local) ---------- */
+:root{
+  --card-bg: #ffffff;
+  --muted: #6b7280;
+  --accent: #1da1f2;
+  --danger: #e0245e;
+  --radius: 12px;
+  --shadow-sm: 0 1px 2px rgba(15,20,25,0.03);
+  --shadow-md: 0 6px 18px rgba(11,20,45,0.06);
+}
+
+/* ---------- Base card (feed) ---------- */
 .post-card {
-  background: #ffffff;
-  border-radius: 12px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
   padding: 12px;
   border: 1px solid rgba(15, 20, 25, 0.06);
-  box-shadow: 0 1px 2px rgba(15, 20, 25, 0.03);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   color: #0f172a;
   transition: box-shadow 160ms ease, transform 120ms ease;
+  will-change: transform;
+  isolation: isolate;
 }
-
-/* Elevação sutil ao passar o mouse */
 .post-card:hover {
-  box-shadow: 0 6px 18px rgba(11, 20, 45, 0.06);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
-/* Header: avatar + autor + menu */
+/* header */
 .post-header {
   display: flex;
   gap: 12px;
   align-items: flex-start;
   margin-bottom: 8px;
 }
-
-/* Avatar */
 .post-author-photo {
   width: 48px;
   height: 48px;
@@ -36,63 +45,17 @@
   border: 1px solid rgba(29,161,242,0.12);
   flex-shrink: 0;
 }
+.post-author-info { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.post-author-info strong { font-size:15px; font-weight:700; color:#0f172a; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.post-username { font-size:13px; color:var(--muted); display:flex; gap:8px; align-items:center; }
+.post-username a { color:var(--muted); text-decoration:none; }
+.post-date { font-size:12px; color:#94a3b8; margin-left:6px; }
 
-/* Info do autor */
-.post-author-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
+/* clickable content */
+.post-card-clickable { text-decoration:none; color:inherit; display:block; margin-bottom:8px; }
 
-.post-author-info strong {
-  font-size: 15px;
-  color: #0f172a;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.post-username {
-  font-size: 13px;
-  color: #6b7280;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.post-username a {
-  color: #6b7280;
-  text-decoration: none;
-}
-
-.post-username a:hover { text-decoration: underline; color: #1da1f2; }
-
-/* Data / tempo */
-.post-date {
-  font-size: 12px;
-  color: #94a3b8;
-  margin-left: 6px;
-}
-
-/* Card clicável (conteúdo que leva ao post) */
-.post-card-clickable {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  margin-bottom: 8px;
-}
-
-/* Bloco de código e conteúdo textual */
-.post-code-block {
-  margin: 8px 0;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(15,20,25,0.06);
-}
-
+/* code block (feed) */
+.post-code-block { margin: 8px 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(15,20,25,0.06); }
 .post-code-block pre {
   margin: 0;
   padding: 12px;
@@ -103,187 +66,174 @@
   line-height: 1.45;
   max-height: 320px;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Imagem do post */
-.post-card-image-wrapper {
-  width: 100%;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 8px;
-  background: #f0f4f8;
-}
-
-.post-card-image {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  transition: transform 220ms ease;
-}
-
+/* image */
+.post-card-image-wrapper { width:100%; border-radius:10px; overflow:hidden; margin-bottom:8px; background:#f0f4f8; }
+.post-card-image { width:100%; height:auto; display:block; object-fit:cover; transition: transform 220ms ease; }
 .post-card-image:hover { transform: scale(1.02); }
 
-/* Descrição destacada tipo "blockquote" */
-.post-description-block {
-  margin-top: 8px;
-  margin-bottom: 10px;
-  padding: 10px 12px;
-  background-color: #f2f6f9;
-  border-left: 4px solid #1da1f2;
-  border-radius: 8px;
+/* description */
+.post-description-block { margin-top:8px; margin-bottom:10px; padding:10px 12px; background-color:#f2f6f9; border-left:4px solid var(--accent); border-radius:8px; }
+.description-label { font-size:12px; font-weight:700; color:var(--accent); margin-bottom:6px; display:block; }
+.post-description { margin:0; color:#0f172a; font-size:14px; line-height:1.5; }
+.toggle-description-btn { background:none; border:none; color:var(--accent); cursor:pointer; font-size:13px; margin-top:6px; }
+
+/* actions */
+.post-actions { display:flex; gap:12px; align-items:center; margin-top:6px; }
+.post-actions button { display:inline-flex; align-items:center; gap:8px; background:none; border:none; padding:6px 8px; border-radius:9999px; cursor:pointer; color:var(--muted); transition: background 120ms ease, color 120ms ease, transform 120ms ease; }
+.post-actions button:hover, .post-actions button:focus { background: rgba(29,161,242,0.06); color:var(--accent); transform:translateY(-1px); outline:none; }
+.like-btn { color: var(--muted); }
+.like-btn.liked { color: var(--danger); background: rgba(224,36,94,0.06); }
+.comments-toggle-btn { color: var(--muted); }
+.likers-btn { background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; padding:4px 0; }
+
+/* likers list */
+.likers-list { margin-top:10px; padding:10px; background:var(--card-bg); border-radius:10px; border:1px solid rgba(15,20,25,0.04); box-shadow:0 1px 2px rgba(11,20,45,0.03); animation:fadeIn 200ms ease; max-height:220px; overflow:auto; }
+.likers-list h4 { margin:0 0 8px 0; font-size:14px; color:#0f172a; }
+.likers-list ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+.likers-list li { display:flex; align-items:center; gap:10px; }
+.likers-list img { width:32px; height:32px; border-radius:50%; object-fit:cover; }
+
+/* menu */
+.post-menu-wrapper { margin-left:auto; position:relative; }
+.post-menu-btn { background:none; border:none; color:var(--muted); font-size:20px; padding:6px; cursor:pointer; }
+.post-menu-btn:hover { color:#0f172a; }
+.post-menu { position:absolute; top:36px; right:0; background:var(--card-bg); border:1px solid rgba(15,20,25,0.06); border-radius:8px; min-width:160px; box-shadow:0 6px 20px rgba(11,20,45,0.08); z-index:40; }
+.post-menu-item { width:100%; padding:10px 12px; text-align:left; background:none; border:none; color:#ef4444; cursor:pointer; display:flex; gap:8px; align-items:center; }
+.post-menu-item:hover { background: rgba(239,68,68,0.04); color:#dc2626; }
+
+/* utilities */
+.post-likers { font-size:13px; color:var(--muted); margin-top:6px; }
+.post-likers strong { color:#0f172a; }
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* responsiveness */
+@media (max-width:480px) {
+  .post-card { padding:10px; border-radius:10px; }
+  .post-author-photo { width:40px; height:40px; }
+  .post-author-info strong { font-size:14px; }
+  .post-code-block pre { font-size:12px; padding:10px; }
 }
 
-.description-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: #1da1f2;
-  margin-bottom: 6px;
-  display: block;
+/* ---------- Compact mode (Explore tiles) ---------- */
+.post-card.compact {
+  display:block;
+  padding:0;
+  border-radius:10px;
+  overflow:hidden;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+  cursor:pointer;
+  text-decoration:none;
+  color:inherit;
+  position:relative;
 }
 
-.post-description {
-  margin: 0;
-  color: #0f172a;
-  font-size: 14px;
-  line-height: 1.5;
+/* reserve espaço para footer (não deixar o footer cobrir conteúdo sem querer) */
+.post-card.compact .compact-media {
+  width:100%;
+  height:100%;
+  display:block;
+  position:relative;
+  background:linear-gradient(180deg, rgba(10,16,24,0.12), rgba(8,12,18,0.18));
+  min-height:180px;
+  aspect-ratio: 1/1;
+  overflow:hidden;
 }
 
-/* Botões de alternar descrição */
-.toggle-description-btn {
-  background: none;
-  border: none;
-  color: #1da1f2;
-  cursor: pointer;
-  font-size: 13px;
-  margin-top: 6px;
+/* ensure a bottom padding area for footer using pseudo-element */
+.post-card.compact .compact-media::after {
+  content: "";
+  display:block;
+  height:58px; /* same height as footer (reserve) */
 }
 
-/* Ações (curtir, comentar) */
-.post-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-top: 6px;
+/* compact image and preview */
+.post-card.compact .compact-image,
+.post-card.compact img.post-card-image {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition: transform 320ms cubic-bezier(.2,.9,.3,1);
+  will-change: transform;
+}
+.post-card.compact:hover .compact-image,
+.post-card.compact:focus-within .compact-image { transform: scale(1.06); }
+
+/* compact code preview container */
+.post-card.compact .compact-code { padding:8px; max-height:220px; overflow:hidden; box-sizing:border-box; }
+.post-card.compact .plain-compact { margin:0; color:#dbeafe; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:13px; line-height:1.35; white-space:pre-wrap; word-break:break-word; }
+
+/* ensure SyntaxHighlighter doesn't inject margins */
+.post-card.compact .compact-code pre { margin:0 !important; padding:0 !important; background:transparent !important; }
+
+/* compact footer: fixed to bottom of tile (visible always) */
+.post-card.compact .compact-footer {
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:8px 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.34));
+  color: #e6eef8;
+  backdrop-filter: blur(4px);
 }
 
-/* Botões principais */
-.post-actions button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: none;
-  padding: 6px 8px;
-  border-radius: 9999px;
-  cursor: pointer;
-  color: #6b7280;
-  transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+/* author area inside footer */
+.post-card.compact .compact-author { display:flex; gap:8px; align-items:center; }
+.post-card.compact .compact-author-avatar { width:36px; height:36px; border-radius:8px; object-fit:cover; border:1px solid rgba(255,255,255,0.06); }
+.post-card.compact .compact-author-meta strong { font-size:13px; display:block; }
+.post-card.compact .compact-time { font-size:12px; color: rgba(230,238,248,0.9); }
+
+/* pills (likes/comments) */
+.post-card.compact .compact-overlay { display:flex; gap:8px; align-items:center; }
+.post-card.compact .pill { display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; background: rgba(0,0,0,0.36); border:1px solid rgba(255,255,255,0.06); color:#fff; font-weight:700; font-size:13px; backdrop-filter: blur(4px); }
+
+/* keyboard focus styles for accessibility */
+.post-card.compact .pill button { background:transparent; border:none; color:inherit; display:inline-flex; gap:6px; align-items:center; cursor:pointer; padding:4px; }
+.post-card.compact .pill button:focus { outline: 2px solid rgba(255,255,255,0.14); outline-offset: 2px; border-radius:6px; }
+
+/* ---------- Targeted scrollbar styles for scrollable elements only ---------- */
+/* WebKit */
+.post-code-block::-webkit-scrollbar,
+.likers-list::-webkit-scrollbar,
+.post-card.compact .compact-code::-webkit-scrollbar {
+  height:8px; width:8px;
+}
+.post-code-block::-webkit-scrollbar-track,
+.likers-list::-webkit-scrollbar-track,
+.post-card.compact .compact-code::-webkit-scrollbar-track {
+  background: rgba(15,20,25,0.03); border-radius:8px;
+}
+.post-code-block::-webkit-scrollbar-thumb,
+.likers-list::-webkit-scrollbar-thumb,
+.post-card.compact .compact-code::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(100,116,139,0.22), rgba(100,116,139,0.14)); border-radius:8px; border:2px solid rgba(255,255,255,0.02);
 }
 
-/* Hover / focus states */
-.post-actions button:hover,
-.post-actions button:focus {
-  background: rgba(29,161,242,0.06);
-  color: #1da1f2;
-  transform: translateY(-1px);
-  outline: none;
-  box-shadow: none;
+/* Firefox */
+.post-code-block, .likers-list, .post-card.compact .compact-code {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100,116,139,0.22) rgba(15,20,25,0.03);
 }
 
-/* Like button state when liked */
-.like-btn {
-  color: #6b7280;
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .post-card, .post-card.compact .compact-image, .post-card.compact .post-overlay { transition: none !important; }
 }
 
-.like-btn.liked {
-  color: #e0245e;
-  background: rgba(224,36,94,0.06);
-}
-
-/* Comments toggle (emphasis quando aberto já definido no componente via props) */
-.comments-toggle-btn {
-  color: #6b7280;
-}
-
-/* Botão para ver curtidas */
-.likers-btn {
-  background: none;
-  border: none;
-  color: #6b7280;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 4px 0;
-}
-
-/* Lista de quem curtiu */
-.likers-list {
-  margin-top: 10px;
-  padding: 10px;
-  background: #ffffff;
-  border-radius: 10px;
-  border: 1px solid rgba(15,20,25,0.04);
-  box-shadow: 0 1px 2px rgba(11,20,45,0.03);
-  animation: fadeIn 200ms ease;
-}
-
-.likers-list h4 { margin: 0 0 8px 0; font-size: 14px; color: #0f172a; }
-.likers-list ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-.likers-list li { display: flex; align-items: center; gap: 10px; }
-.likers-list img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-
-/* Menu de três pontos */
-.post-menu-wrapper { margin-left: auto; position: relative; }
-.post-menu-btn {
-  background: none;
-  border: none;
-  color: #6b7280;
-  font-size: 20px;
-  padding: 6px;
-  cursor: pointer;
-}
-.post-menu-btn:hover { color: #0f172a; }
-
-/* Menu dropdown */
-.post-menu {
-  position: absolute;
-  top: 36px;
-  right: 0;
-  background: #ffffff;
-  border: 1px solid rgba(15,20,25,0.06);
-  border-radius: 8px;
-  min-width: 160px;
-  box-shadow: 0 6px 20px rgba(11,20,45,0.08);
-  z-index: 40;
-}
-
-.post-menu-item {
-  width: 100%;
-  padding: 10px 12px;
-  text-align: left;
-  background: none;
-  border: none;
-  color: #ef4444;
-  cursor: pointer;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.post-menu-item:hover { background: rgba(239,68,68,0.04); color: #dc2626; }
-
-/* Pequenas utilidades */
-.post-likers { font-size: 13px; color: #6b7280; margin-top: 6px; }
-.post-likers strong { color: #0f172a; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Responsividade do card */
-@media (max-width: 480px) {
-  .post-card { padding: 10px; border-radius: 10px; }
-  .post-author-photo { width: 40px; height: 40px; }
-  .post-author-info strong { font-size: 14px; }
-  .post-code-block pre { font-size: 12px; padding: 10px; }
+/* small responsive tweaks */
+@media (max-width:920px) {
+  .post-card.compact .compact-footer { padding:8px; }
+  .post-card.compact .compact-author-avatar { width:32px; height:32px; }
+  .post-card.compact .pill { padding:6px 9px; font-size:12px; }
 }
